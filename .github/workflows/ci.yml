@@ -1,0 +1,44 @@
+name: Shipyard CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Build and Test Client
+      run: |
+        if [ -f Client/package.json ]; then
+          cd Client
+          npm ci
+          npm run build --if-present
+        else
+          echo "Skipping Client (package.json not found)."
+        fi
+
+    - name: Build and Test Server
+      run: |
+        if [ -f Server/package.json ]; then
+          cd Server
+          npm ci
+          npm test --if-present
+        else
+          echo "Skipping Server (package.json not found)."
+        fi
