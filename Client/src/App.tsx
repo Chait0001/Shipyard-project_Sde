@@ -6,6 +6,8 @@ import { LoginPage } from '@/pages/LoginPage'
 import { SignupPage } from '@/pages/SignupPage'
 import { OAuthCallbackPage } from '@/pages/OAuthCallbackPage'
 import { TeamsPage } from '@/pages/TeamsPage'
+import { TeamDetailPage } from '@/pages/TeamDetailPage'
+import { TeamSettingsPage } from '@/pages/TeamSettingsPage'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { DashboardLayout } from '@/components/DashboardLayout'
 import './index.css'
@@ -60,6 +62,8 @@ function App() {
                     }
                   />
                   <Route path="/dashboard/teams" element={<TeamsPage />} />
+                  <Route path="/dashboard/teams/:teamId" element={<TeamDetailPage />} />
+                  <Route path="/dashboard/teams/:teamId/settings" element={<TeamSettingsPage />} />
                   <Route
                     path="/dashboard/repos"
                     element={

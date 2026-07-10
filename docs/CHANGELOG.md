@@ -10,6 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Created `TeamSettingsPage` (`src/pages/TeamSettingsPage/`) accessible at `/dashboard/teams/:teamId/settings` allowing settings management with three distinct cards: General (editable name, slug, description fields with validation), Notifications (toggle switches for member joins, project updates, and permission changes), and Danger Zone (destructive delete team action with confirmation modal requiring typing team name).
+- Added Settings button in `TeamDetailPage` header actions to navigate to the settings page.
+- Registered `/dashboard/teams/:teamId/settings` settings route in `App.tsx`.
+- Built `InviteMemberModal` component (`src/components/InviteMemberModal/`) with email input, custom role selector dropdown (Viewer/Engineer/Manager/Admin) displaying role descriptions and check indicator, email validation, API integration for `POST /organisations/:orgId/teams/:teamId/invitations`, and graceful offline demo-mode fallback.
+- Integrated `InviteMemberModal` into `TeamDetailPage` — the "Invite Member" header button now opens the dialog, successfully invited members are appended to the members table, and a success toast notification confirms the invitation.
+- Built `TeamMembersTable` component (`src/components/TeamMembersTable/`) with sortable columns (Name, Role, Joined Date), colour-coded role badges (Owner/Admin/Manager/Engineer/Viewer) with distinct light and dark theme variants, avatar initials fallback, relative date display with full-date tooltip, skeleton shimmer loading rows, empty state, and responsive layout that hides the joined column on mobile.
+- Created `TeamDetailPage` (`src/pages/TeamDetailPage/`) at route `/dashboard/teams/:teamId` displaying team header with avatar, slug, and description, back navigation to all teams, member search filter, and the `TeamMembersTable` component. Includes API integration with graceful offline demo-mode fallback using rich mock member data.
+- Registered `/dashboard/teams/:teamId` route in `App.tsx` linking the team card "View Details" action to the team detail page.
+- Created reusable `Modal` dialog component (`src/components/ui/Modal/`) with backdrop overlay, backdrop-blur, focus trapping, keyboard handling (Escape to close, Tab cycling), portal rendering, ARIA `dialog` / `aria-modal` attributes, three size variants (`sm`, `md`, `lg`), and responsive bottom-sheet layout on mobile screens.
+- Built `CreateTeamModal` component (`src/components/CreateTeamModal/`) with validated form fields (Team Name, Identifier/slug, Description), auto-slug generation from team name, character count feedback on the description textarea, inline field validation, API error banner, and a graceful offline demo-mode fallback that simulates team creation.
+- Integrated `CreateTeamModal` into the Teams overview page — the "Create Team" header button and empty-state CTA now open the modal, and newly created teams are prepended to the grid with a success toast notification.
 - Implemented teams overview page at `/dashboard/teams` displaying a grid of organisation team cards, including search filters, loading skeleton states, and a graceful fallback to rich mockup data when connection is offline.
 - Implemented `ThemeContext` state provider to manage, persist, and apply dark/light styling preferences across components.
 - Created `ThemeToggle` action button rendering dynamic Sun/Moon icons in the Navbar right actions section.

@@ -54,6 +54,10 @@
   color: var(--color-accent-info);
 }
 
+.teams-page__toast--success .teams-page__toast-icon {
+  color: var(--color-accent-success);
+}
+
 /* ---- Header Section ---- */
 .teams-page__header {
   display: flex;

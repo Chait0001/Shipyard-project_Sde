@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react'
 import { useOrganisation } from '@/context/OrganisationContext'
 import api from '@/utils/axios'
 import { Button } from '@/components/ui/Button'
-import { Users, Search, Plus, ArrowRight, Layers, Info, AlertCircle } from 'lucide-react'
+import { CreateTeamModal } from '@/components/CreateTeamModal'
+import type { CreatedTeam } from '@/components/CreateTeamModal'
+import { Users, Search, Plus, ArrowRight, Layers, AlertCircle, CheckCircle2 } from 'lucide-react'
 import './TeamsPage.css'
 
 interface Team {
@@ -59,6 +61,7 @@ export function TeamsPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isDemoMode, setIsDemoMode] = useState(false)
   const [notification, setNotification] = useState<string | null>(null)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
   useEffect(() => {
     let isMounted = true
@@ -115,7 +118,12 @@ export function TeamsPage() {
   )
 
   const handleCreateTeamClick = () => {
-    setNotification('The "Create New Team" action will be implemented in the next step.')
+    setIsCreateModalOpen(true)
+  }
+
+  const handleTeamCreated = (team: CreatedTeam) => {
+    setTeams((prev) => [team, ...prev])
+    setNotification(`Team "${team.name}" created successfully.`)
     setTimeout(() => {
       setNotification(null)
     }, 4000)
@@ -133,10 +141,17 @@ export function TeamsPage() {
 
   return (
     <div className="teams-page">
+      {/* Create Team Modal */}
+      <CreateTeamModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onTeamCreated={handleTeamCreated}
+      />
+
       {/* Notifications / Toast */}
       {notification && (
-        <div className="teams-page__toast" role="alert">
-          <Info size={16} className="teams-page__toast-icon" />
+        <div className="teams-page__toast teams-page__toast--success" role="alert">
+          <CheckCircle2 size={16} className="teams-page__toast-icon" />
           <span>{notification}</span>
         </div>
       )}
