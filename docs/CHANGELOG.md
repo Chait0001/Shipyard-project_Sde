@@ -10,6 +10,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Implemented teams overview page at `/dashboard/teams` displaying a grid of organisation team cards, including search filters, loading skeleton states, and a graceful fallback to rich mockup data when connection is offline.
+- Implemented `ThemeContext` state provider to manage, persist, and apply dark/light styling preferences across components.
+- Created `ThemeToggle` action button rendering dynamic Sun/Moon icons in the Navbar right actions section.
+- Implemented `OrganisationContext` state provider to fetch, store, and persist active organization workspace selections across platform sections.
+- Created `WorkspaceSwitcher` dropdown component displaying selectable organization workspaces inside the collapsible `Sidebar` header.
+- Implemented `UserProfileDropdown` menu displaying the active user's details (name, email, role badge), action link placeholders, and a functional log out trigger.
+- Added mouse click-outside triggers and keyboard Escape key listeners to close the `UserProfileDropdown` dynamically.
+- Created reusable `Breadcrumb` component that dynamically reads location pathname, maps path segments to clean text values, and renders them in semantic lists.
+- Implemented `Navbar` header component with custom styling, left slots for future Breadcrumbs, right slots for user dropdowns, and a centered Global Search field.
+- Integrated keyboard listener in `Navbar` to automatically focus the search field upon pressing `⌘K` (on macOS) or `Ctrl+K` (on Windows/Linux) shortcut keys.
+- Implemented `DashboardLayout` container with collapsible sidebar navigation, including full mobile responsiveness (overlay navigation drawer on screens <= 768px).
+- Created reusable `Sidebar` navigation component with route active states, collapsible controls, and user profile footer matching the design system.
 - Scaffolded React + Vite + TypeScript project inside `Client/` directory.
 - Configured path aliases (`@/`) in both Vite and TypeScript configs.
 - Implemented global CSS stylesheet with full design token system (colors, typography, spacing, radius, shadows) for both light and dark mode.

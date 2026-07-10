@@ -1,0 +1,41 @@
+/* ============================================================
+   ThemeToggle — Action button to switch styling modes
+   ============================================================ */
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  color: var(--color-foreground-secondary);
+  background-color: transparent;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.theme-toggle:hover {
+  background-color: var(--color-background-subtle);
+  color: var(--color-foreground);
+  border-color: var(--color-border-strong);
+}
+
+.theme-toggle__icon {
+  flex-shrink: 0;
+  animation: theme-toggle-spin var(--transition-slow);
+}
+
+@keyframes theme-toggle-spin {
+  from {
+    transform: rotate(-15deg);
+  }
+  to {
+    transform: rotate(0);
+  }
+}

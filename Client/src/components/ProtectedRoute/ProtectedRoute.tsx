@@ -63,15 +63,22 @@ export function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
     return (
       <div className="protected-route-loading" role="alert">
         <div className="protected-route-denied-icon" aria-hidden="true">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
             <path d="M7 11V7a5 5 0 0 1 10 0v4" />
           </svg>
         </div>
         <h1 className="protected-route-denied-title">Access denied</h1>
-        <p className="protected-route-text">
-          You do not have permission to view this page.
-        </p>
+        <p className="protected-route-text">You do not have permission to view this page.</p>
         <a href="/dashboard" className="protected-route-link">
           Return to dashboard
         </a>
@@ -82,4 +89,3 @@ export function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
   // Render the protected child route
   return <Outlet />
 }
-

@@ -36,10 +36,7 @@ export function getRoleLevel(role: string | undefined): number {
  * hasMinimumRole('admin', 'manager')  // true
  * hasMinimumRole('viewer', 'engineer') // false
  */
-export function hasMinimumRole(
-  userRole: string | undefined,
-  requiredRole: Role,
-): boolean {
+export function hasMinimumRole(userRole: string | undefined, requiredRole: Role): boolean {
   return getRoleLevel(userRole) >= getRoleLevel(requiredRole)
 }
 
@@ -50,9 +47,6 @@ export function hasMinimumRole(
  * hasRole('admin', ['admin', 'owner']) // true
  * hasRole('viewer', ['admin'])         // false
  */
-export function hasRole(
-  userRole: string | undefined,
-  allowedRoles: Role[],
-): boolean {
+export function hasRole(userRole: string | undefined, allowedRoles: Role[]): boolean {
   return allowedRoles.includes(userRole as Role)
 }

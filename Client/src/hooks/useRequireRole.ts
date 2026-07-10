@@ -43,11 +43,7 @@ export function useRequireRole({
   const { isAtLeast, is } = useRole()
   const navigate = useNavigate()
 
-  const authorised = allowedRoles
-    ? is(allowedRoles)
-    : minimumRole
-      ? isAtLeast(minimumRole)
-      : true
+  const authorised = allowedRoles ? is(allowedRoles) : minimumRole ? isAtLeast(minimumRole) : true
 
   useEffect(() => {
     if (!authorised) {

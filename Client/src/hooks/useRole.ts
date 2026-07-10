@@ -23,14 +23,12 @@ export function useRole() {
      * Check whether the user meets or exceeds a minimum role level.
      * Uses the hierarchical role ordering: viewer < engineer < manager < admin < owner.
      */
-    const isAtLeast = (requiredRole: Role): boolean =>
-      hasMinimumRole(role, requiredRole)
+    const isAtLeast = (requiredRole: Role): boolean => hasMinimumRole(role, requiredRole)
 
     /**
      * Check whether the user's role is included in a specific set of roles.
      */
-    const is = (allowedRoles: Role[]): boolean =>
-      hasRole(role, allowedRoles)
+    const is = (allowedRoles: Role[]): boolean => hasRole(role, allowedRoles)
 
     return {
       /** The user's current role string */
