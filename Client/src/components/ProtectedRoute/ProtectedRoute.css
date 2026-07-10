@@ -1,0 +1,68 @@
+/* ============================================================
+   ProtectedRoute — Loading state styles
+   ============================================================ */
+
+.protected-route-loading {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  background-color: var(--color-background);
+}
+
+/* ---- Spinner ---- */
+.protected-route-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: protected-route-spin 700ms linear infinite;
+}
+
+@keyframes protected-route-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---- Text ---- */
+.protected-route-text {
+  font-size: var(--text-sm);
+  color: var(--color-foreground-secondary);
+}
+
+/* ---- Access Denied ---- */
+.protected-route-denied-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  color: var(--color-accent-warning);
+  background-color: rgba(245, 158, 11, 0.1);
+}
+
+.protected-route-denied-title {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-foreground);
+  letter-spacing: -0.025em;
+}
+
+.protected-route-link {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-foreground);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--transition-fast);
+}
+
+.protected-route-link:hover {
+  color: var(--color-accent-info);
+}
+

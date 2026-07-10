@@ -17,6 +17,7 @@ interface AuthContextType {
   isLoading: boolean
   login: (email: string, password: string) => Promise<void>
   signup: (name: string, email: string, password: string) => Promise<void>
+  loginWithGitHub: (code: string) => Promise<void>
   logout: () => void
 }
 
@@ -103,10 +104,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const loginWithGitHub = async (code: string) => {
+    setIsLoading(true)
+    try {
+      const response = await api.post('/auth/github', { code })
+      const { token, user: userData } = response.data
+
+      // Store token
+      localStorage.setItem('token', token)
+
+      // Adapt backend model (id vs _id)
+      setUser({
+        id: userData.id || userData._id,
+        name: userData.name,
+        email: userData.email,
+        avatarUrl: userData.avatarUrl,
+        globalRole: userData.globalRole || 'engineer',
+      })
+    } catch (error) {
+      logout()
+      throw error
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const isAuthenticated = !!user
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, isLoading, login, signup, logout }}>
+    <AuthContext.Provider
+      value={{ user, isAuthenticated, isLoading, login, signup, loginWithGitHub, logout }}
+    >
       {children}
     </AuthContext.Provider>
   )

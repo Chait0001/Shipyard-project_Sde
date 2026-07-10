@@ -1,0 +1,97 @@
+/* ============================================================
+   OAuthCallbackPage — Processing & error state styles
+   ============================================================ */
+
+.oauth-callback-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background-color: var(--color-background-subtle);
+}
+
+.oauth-callback-card {
+  width: 100%;
+  max-width: 380px;
+  padding: var(--space-8);
+  text-align: center;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ---- Spinner ---- */
+.oauth-callback-spinner {
+  width: 36px;
+  height: 36px;
+  margin: 0 auto var(--space-5);
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: oauth-spin 700ms linear infinite;
+}
+
+@keyframes oauth-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---- Error Icon ---- */
+.oauth-callback-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto var(--space-4);
+  border-radius: var(--radius-full);
+}
+
+.oauth-callback-icon--error {
+  color: var(--color-accent-error);
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* ---- Typography ---- */
+.oauth-callback-title {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-foreground);
+  letter-spacing: -0.025em;
+}
+
+.oauth-callback-message {
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-foreground-secondary);
+  line-height: 1.5;
+}
+
+/* ---- Link ---- */
+.oauth-callback-link {
+  display: inline-block;
+  margin-top: var(--space-5);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-foreground);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--transition-fast);
+}
+
+.oauth-callback-link:hover {
+  color: var(--color-accent-info);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 480px) {
+  .oauth-callback-card {
+    padding: var(--space-6);
+    border: none;
+    box-shadow: none;
+    background-color: var(--color-background-subtle);
+  }
+}

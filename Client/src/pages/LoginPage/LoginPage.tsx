@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { redirectToGitHub } from '@/utils/github'
 import '@/styles/auth.css'
 
 function GitHubIcon() {
@@ -27,6 +28,10 @@ export function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const { login } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+
+  // Redirect back to the page the user originally requested (set by ProtectedRoute)
+  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/dashboard'
 
   function validate(): boolean {
     const newErrors: LoginFormErrors = {}
@@ -56,7 +61,7 @@ export function LoginPage() {
 
     try {
       await login(email, password)
-      navigate('/dashboard')
+      navigate(from, { replace: true })
     } catch (error) {
       const axiosError = error as { response?: { data?: { message?: string } } }
       const message = axiosError.response?.data?.message || 'Invalid email or password. Please try again.'
@@ -67,8 +72,7 @@ export function LoginPage() {
   }
 
   function handleGitHubLogin() {
-    // TODO: Replace with actual GitHub OAuth flow in Milestone 2 Task 4
-    console.warn('[LoginPage] GitHub OAuth pending — not yet implemented')
+    redirectToGitHub()
   }
 
   return (
