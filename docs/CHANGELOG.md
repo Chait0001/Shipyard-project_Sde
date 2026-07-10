@@ -22,6 +22,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `lint`, `lint:fix`, `format`, and `format:check` npm scripts.
 - Created core application folder structure (`components`, `pages`, `context`, `utils`, `hooks`, `styles`).
 - Configured custom Axios instance with JWT request interceptor and 401 response error handler.
+- Created reusable `Button` component (variants: primary, secondary, ghost, destructive; sizes: sm, md, lg, icon; loading state).
+- Created reusable `Input` component (label, inline error, aria-invalid, aria-describedby support).
+- Created `/login` page with email/password form, client-side validation, inline errors, GitHub OAuth button, and responsive mobile layout.
+- Created `/signup` page with form validation, confirmation checks, and GitHub OAuth registration.
+- Extracted shared auth CSS styles into a common `src/styles/auth.css` file reused by both auth pages.
+- Wired `BrowserRouter`, `/login`, and `/signup` routes into `App.tsx`.
+- Created `AuthContext` provider handling global state (`user`, `isAuthenticated`, `isLoading`), Axios API integration, JWT local storage persistence, and authentication mount check.
+- Wired `useAuth` authentication hook into the `LoginPage` and `SignupPage` forms.
 
 ### Changed
 - Nothing yet.
