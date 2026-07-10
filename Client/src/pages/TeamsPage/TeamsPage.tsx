@@ -4,7 +4,7 @@ import api from '@/utils/axios'
 import { Button } from '@/components/ui/Button'
 import { CreateTeamModal } from '@/components/CreateTeamModal'
 import type { CreatedTeam } from '@/components/CreateTeamModal'
-import { Users, Search, Plus, ArrowRight, Layers, Info, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { Users, Search, Plus, ArrowRight, Layers, AlertCircle, CheckCircle2 } from 'lucide-react'
 import './TeamsPage.css'
 
 interface Team {
