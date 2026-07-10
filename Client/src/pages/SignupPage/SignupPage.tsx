@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { redirectToGitHub } from '@/utils/github'
 import '@/styles/auth.css'
 
 function GitHubIcon() {
@@ -81,8 +82,7 @@ export function SignupPage() {
   }
 
   function handleGitHubSignup() {
-    // TODO: Replace with actual GitHub OAuth flow in Milestone 2 Task 4
-    console.warn('[SignupPage] GitHub OAuth pending — not yet implemented')
+    redirectToGitHub()
   }
 
   return (
