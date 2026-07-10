@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/context/ThemeContext'
 import { LoginPage } from '@/pages/LoginPage'
 import { SignupPage } from '@/pages/SignupPage'
 import { OAuthCallbackPage } from '@/pages/OAuthCallbackPage'
+import { TeamsPage } from '@/pages/TeamsPage'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { DashboardLayout } from '@/components/DashboardLayout'
 import './index.css'
@@ -58,15 +59,7 @@ function App() {
                       />
                     }
                   />
-                  <Route
-                    path="/dashboard/teams"
-                    element={
-                      <PlaceholderPage
-                        title="Teams"
-                        description="Organisation team management, roles, and member invitations."
-                      />
-                    }
-                  />
+                  <Route path="/dashboard/teams" element={<TeamsPage />} />
                   <Route
                     path="/dashboard/repos"
                     element={

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Implemented teams overview page at `/dashboard/teams` displaying a grid of organisation team cards, including search filters, loading skeleton states, and a graceful fallback to rich mockup data when connection is offline.
 - Implemented `ThemeContext` state provider to manage, persist, and apply dark/light styling preferences across components.
 - Created `ThemeToggle` action button rendering dynamic Sun/Moon icons in the Navbar right actions section.
 - Implemented `OrganisationContext` state provider to fetch, store, and persist active organization workspace selections across platform sections.

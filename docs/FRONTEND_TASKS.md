@@ -2,8 +2,8 @@
 
 Overall Progress
 
-Completed: 18 / 47
-■■■■□□□□□□ 38%
+Completed: 19 / 47
+■■■■□□□□□□ 40%
 
 ---
 
@@ -60,14 +60,14 @@ Estimated Time
 
 ## Milestone 4 — Organisation & Team Management
 
-- [ ] Create `/dashboard/teams` overview page
+- [x] Create `/dashboard/teams` overview page
 - [ ] Build "Create New Team" modal
 - [ ] Implement Team Member list table with Roles
 - [ ] Create "Invite Member" dialog
 - [ ] Build Team Settings page
 
 Progress
-0 / 5
+1 / 5
 
 Estimated Time
 4 hours
