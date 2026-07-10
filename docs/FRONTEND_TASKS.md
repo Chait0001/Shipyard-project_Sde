@@ -2,8 +2,8 @@
 
 Overall Progress
 
-Completed: 19 / 47
-■■■■□□□□□□ 40%
+Completed: 23 / 47
+■■■■■□□□□□ 49%
 
 ---
 
@@ -61,13 +61,13 @@ Estimated Time
 ## Milestone 4 — Organisation & Team Management
 
 - [x] Create `/dashboard/teams` overview page
-- [ ] Build "Create New Team" modal
-- [ ] Implement Team Member list table with Roles
-- [ ] Create "Invite Member" dialog
-- [ ] Build Team Settings page
+- [x] Build "Create New Team" modal
+- [x] Implement Team Member list table with Roles
+- [x] Create "Invite Member" dialog
+- [x] Build Team Settings page
 
 Progress
-1 / 5
+5 / 5
 
 Estimated Time
 4 hours
@@ -156,10 +156,10 @@ Estimated Time
 ---
 
 Upcoming Tasks
-- Create /dashboard/teams overview page
+- Create /dashboard/repos connection page
 
 Current Sprint
-- Milestone 3 — Dashboard Foundation & Layout
+- Milestone 5 — GitHub Integration & Workspace
 
 Blocked Tasks
 - None
