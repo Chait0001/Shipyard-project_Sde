@@ -2,23 +2,22 @@
 
 Overall Progress
 
-Completed: 0 / 48
-□□□□□□□□□□ 0%
+Completed: 6 / 47
+■■□□□□□□□□ 12%
 
 ---
 
 ## Milestone 1 — Project Setup
 
-- [ ] Create Next.js project with App Router
-- [ ] Install Tailwind CSS v4
-- [ ] Install shadcn/ui components
-- [ ] Configure ESLint and Prettier
-- [ ] Configure Husky for pre-commit hooks
-- [ ] Create core folder structure (components, app, lib, hooks)
-- [ ] Setup global CSS variables for Light/Dark mode
+- [x] Scaffold React + Vite project inside `Client/` directory
+- [x] Install core dependencies (react-router-dom, axios, lucide-react)
+- [x] Configure ESLint and Prettier
+- [x] Create core folder structure (components, pages, context, utils, hooks, styles)
+- [x] Setup global CSS variables and design tokens for Light/Dark mode
+- [x] Configure Axios instance with base URL and interceptors
 
 Progress
-0 / 7
+6 / 6
 
 Estimated Time
 3 hours
@@ -29,9 +28,9 @@ Estimated Time
 
 - [ ] Create `/login` page UI
 - [ ] Create `/signup` page UI
-- [ ] Integrate authentication provider (NextAuth/Clerk)
-- [ ] Implement OAuth login (GitHub)
-- [ ] Create Route Protection Middleware
+- [ ] Implement AuthContext provider with JWT token management
+- [ ] Implement OAuth login (GitHub) flow
+- [ ] Create ProtectedRoute wrapper component
 - [ ] Design and implement Role-based Access Control (RBAC) hooks
 
 Progress
@@ -44,7 +43,7 @@ Estimated Time
 
 ## Milestone 3 — Dashboard Foundation & Layout
 
-- [ ] Build Collapsible Sidebar navigation
+- [ ] Build DashboardLayout with Collapsible Sidebar navigation
 - [ ] Build Top Navbar with Global Search
 - [ ] Implement Breadcrumb component
 - [ ] Build User Profile Dropdown menu
@@ -96,7 +95,7 @@ Estimated Time
 
 - [ ] Create `/dashboard/projects` listing page
 - [ ] Build "New Project" wizard
-- [ ] Implement Project Detail page (`/dashboard/projects/[id]`)
+- [ ] Implement Project Detail page (`/dashboard/projects/:id`)
 - [ ] Build Kanban Board component for issue tracking
 - [ ] Build List View for project issues
 - [ ] Implement Drag-and-drop for Kanban columns
@@ -157,10 +156,10 @@ Estimated Time
 ---
 
 Upcoming Tasks
-- Setup project repository
+- Create `/login` page UI
 
 Current Sprint
-- Milestone 1 — Project Setup
+- Milestone 2 — Authentication & Identity
 
 Blocked Tasks
 - None
