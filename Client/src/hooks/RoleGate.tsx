@@ -41,19 +41,10 @@ interface RoleGateProps {
  *   <AdminPanel />
  * </RoleGate>
  */
-export function RoleGate({
-  minimumRole,
-  allowedRoles,
-  children,
-  fallback = null,
-}: RoleGateProps) {
+export function RoleGate({ minimumRole, allowedRoles, children, fallback = null }: RoleGateProps) {
   const { isAtLeast, is } = useRole()
 
-  const authorised = allowedRoles
-    ? is(allowedRoles)
-    : minimumRole
-      ? isAtLeast(minimumRole)
-      : true
+  const authorised = allowedRoles ? is(allowedRoles) : minimumRole ? isAtLeast(minimumRole) : true
 
   return authorised ? <>{children}</> : <>{fallback}</>
 }

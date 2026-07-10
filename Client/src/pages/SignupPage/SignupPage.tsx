@@ -74,7 +74,8 @@ export function SignupPage() {
       navigate('/dashboard')
     } catch (error) {
       const axiosError = error as { response?: { data?: { message?: string } } }
-      const message = axiosError.response?.data?.message || 'An account with this email may already exist.'
+      const message =
+        axiosError.response?.data?.message || 'An account with this email may already exist.'
       setErrors({ general: message })
     } finally {
       setIsLoading(false)

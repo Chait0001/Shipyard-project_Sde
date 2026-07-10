@@ -26,7 +26,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       // Clear token
       localStorage.removeItem('token')
-      
+
       // Redirect to login only if not already on auth pages
       const currentPath = window.location.pathname
       if (currentPath !== '/login' && currentPath !== '/signup') {

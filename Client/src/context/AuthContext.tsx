@@ -60,10 +60,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const response = await api.post('/auth/login', { email, password })
       const { token, user: userData } = response.data
-      
+
       // Store token
       localStorage.setItem('token', token)
-      
+
       // Adapt backend model (id vs _id)
       setUser({
         id: userData.id || userData._id,
@@ -74,7 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       })
     } catch (error) {
       logout()
-      throw error;
+      throw error
     } finally {
       setIsLoading(false)
     }
@@ -85,10 +85,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const response = await api.post('/auth/register', { name, email, password })
       const { token, user: userData } = response.data
-      
+
       // Store token
       localStorage.setItem('token', token)
-      
+
       setUser({
         id: userData.id || userData._id,
         name: userData.name,
@@ -98,7 +98,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       })
     } catch (error) {
       logout()
-      throw error;
+      throw error
     } finally {
       setIsLoading(false)
     }

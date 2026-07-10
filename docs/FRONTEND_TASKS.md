@@ -2,8 +2,8 @@
 
 Overall Progress
 
-Completed: 12 / 47
-■■■□□□□□□□ 25%
+Completed: 18 / 47
+■■■■□□□□□□ 38%
 
 ---
 
@@ -43,15 +43,15 @@ Estimated Time
 
 ## Milestone 3 — Dashboard Foundation & Layout
 
-- [ ] Build DashboardLayout with Collapsible Sidebar navigation
-- [ ] Build Top Navbar with Global Search
-- [ ] Implement Breadcrumb component
-- [ ] Build User Profile Dropdown menu
-- [ ] Build Workspace/Organisation Switcher
-- [ ] Implement Dark/Light Mode toggle
+- [x] Build DashboardLayout with Collapsible Sidebar navigation
+- [x] Build Top Navbar with Global Search
+- [x] Implement Breadcrumb component
+- [x] Build User Profile Dropdown menu
+- [x] Build Workspace/Organisation Switcher
+- [x] Implement Dark/Light Mode toggle
 
 Progress
-0 / 6
+6 / 6
 
 Estimated Time
 5 hours
@@ -156,7 +156,7 @@ Estimated Time
 ---
 
 Upcoming Tasks
-- Build DashboardLayout with Collapsible Sidebar navigation
+- Create /dashboard/teams overview page
 
 Current Sprint
 - Milestone 3 — Dashboard Foundation & Layout
