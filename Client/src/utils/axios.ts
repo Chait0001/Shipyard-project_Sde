@@ -24,9 +24,14 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Clear token and redirect to login if unauthorized
+      // Clear token
       localStorage.removeItem('token')
-      window.location.href = '/login'
+      
+      // Redirect to login only if not already on auth pages
+      const currentPath = window.location.pathname
+      if (currentPath !== '/login' && currentPath !== '/signup') {
+        window.location.href = '/login'
+      }
     }
     return Promise.reject(error)
   },

@@ -2,8 +2,8 @@
 
 Overall Progress
 
-Completed: 6 / 47
-■■□□□□□□□□ 12%
+Completed: 9 / 47
+■■□□□□□□□□ 19%
 
 ---
 
@@ -26,15 +26,15 @@ Estimated Time
 
 ## Milestone 2 — Authentication & Identity
 
-- [ ] Create `/login` page UI
-- [ ] Create `/signup` page UI
-- [ ] Implement AuthContext provider with JWT token management
+- [x] Create `/login` page UI
+- [x] Create `/signup` page UI
+- [x] Implement AuthContext provider with JWT token management
 - [ ] Implement OAuth login (GitHub) flow
 - [ ] Create ProtectedRoute wrapper component
 - [ ] Design and implement Role-based Access Control (RBAC) hooks
 
 Progress
-0 / 6
+3 / 6
 
 Estimated Time
 4 hours
@@ -156,7 +156,7 @@ Estimated Time
 ---
 
 Upcoming Tasks
-- Create `/login` page UI
+- Implement OAuth login (GitHub) flow
 
 Current Sprint
 - Milestone 2 — Authentication & Identity
