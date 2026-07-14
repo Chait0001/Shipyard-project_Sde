@@ -130,7 +130,7 @@ const Dashboard = () => {
       ) : (
         <div className="projects-grid">
           {filteredProjects.map((project) => (
-            <Link to={`/projects/${project._id}`} key={project._id} className="glass-card glass-card-hover project-card fade-in-up">
+            <Link to={`/projects/${project.id}`} key={project.id} className="glass-card glass-card-hover project-card fade-in-up">
               <div className="project-card-header">
                 <h3 className="project-card-title">{project.title}</h3>
                 <span className={`badge ${getStatusBadgeClass(project.status)}`}>
