@@ -1,70 +1,73 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../config/db');
 const bcrypt = require('bcryptjs');
 
-const UserSchema = new mongoose.Schema({
+const User = sequelize.define('User', {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true,
+  },
   name: {
-    type: String,
-    required: [true, 'Please provide a name'],
-    trim: true,
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: { msg: 'Please provide a name' },
+    },
   },
   email: {
-    type: String,
-    required: [true, 'Please provide an email'],
+    type: DataTypes.STRING,
+    allowNull: false,
     unique: true,
-    lowercase: true,
-    trim: true,
-    match: [
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-      'Please provide a valid email address',
-    ],
+    validate: {
+      isEmail: { msg: 'Please provide a valid email address' },
+      notEmpty: { msg: 'Please provide an email' },
+    },
   },
   password: {
-    type: String,
-    required: [true, 'Please provide a password'],
-    minlength: [6, 'Password must be at least 6 characters'],
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      len: {
+        args: [6, 100],
+        msg: 'Password must be at least 6 characters',
+      },
+    },
   },
   role: {
-    type: String,
-    enum: [
+    type: DataTypes.ENUM(
       'Organisation Admin',
       'Engineering Manager',
       'Team Lead',
       'Engineer',
       'Product Manager'
-    ],
-    default: 'Engineer',
+    ),
+    defaultValue: 'Engineer',
   },
   githubUsername: {
-    type: String,
-    trim: true,
+    type: DataTypes.STRING,
+    allowNull: true,
   },
-  organisation: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Organisation',
-  },
-  teams: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Team',
-    }
-  ],
-  createdAt: {
-    type: Date,
-    default: Date.now,
+}, {
+  hooks: {
+    beforeCreate: async (user) => {
+      if (user.password) {
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(user.password, salt);
+      }
+    },
+    beforeUpdate: async (user) => {
+      if (user.changed('password')) {
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(user.password, salt);
+      }
+    },
   },
 });
 
-// Encrypt password using bcrypt
-UserSchema.pre('save', async function () {
-  if (!this.isModified('password')) return;
-
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-});
-
-// Match user entered password to hashed password in database
-UserSchema.methods.matchPassword = async function (enteredPassword) {
+// Custom instance method
+User.prototype.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = User;

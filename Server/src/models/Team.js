@@ -1,38 +1,30 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../config/db');
 
-const TeamSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: [true, 'Please provide a team name'],
-      trim: true,
-    },
-    department: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Department',
-    },
-    organisation: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Organisation',
-      required: [true, 'A team must belong to an organisation'],
-    },
-    members: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-      }
-    ],
-    description: {
-      type: String,
-      trim: true,
+const Team = sequelize.define('Team', {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true,
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: { msg: 'Please provide a team name' },
     },
   },
-  {
-    timestamps: true,
-  }
-);
+  description: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+}, {
+  indexes: [
+    {
+      unique: true,
+      fields: ['organisationId', 'name'],
+    },
+  ],
+});
 
-// Optimize checking teams by organisation or department
-TeamSchema.index({ organisation: 1, name: 1 }, { unique: true });
-
-module.exports = mongoose.model('Team', TeamSchema);
+module.exports = Team;

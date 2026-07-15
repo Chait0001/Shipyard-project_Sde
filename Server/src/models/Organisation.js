@@ -1,31 +1,28 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../config/db');
 
-const OrganisationSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: [true, 'Please provide an organisation name'],
-      unique: true,
-      trim: true,
-    },
-    description: {
-      type: String,
-      trim: true,
-    },
-    githubOrgName: {
-      type: String,
-      trim: true,
-      helpText: 'The mapped GitHub organization name for integration',
-    },
-    owner: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
+const Organisation = sequelize.define('Organisation', {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true,
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+    validate: {
+      notEmpty: { msg: 'Please provide an organisation name' },
     },
   },
-  {
-    timestamps: true,
-  }
-);
+  description: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  githubOrgName: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+});
 
-module.exports = mongoose.model('Organisation', OrganisationSchema);
+module.exports = Organisation;

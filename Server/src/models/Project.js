@@ -1,30 +1,33 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/db');
 
-const Department = sequelize.define('Department', {
+const Project = sequelize.define('Project', {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
   },
-  name: {
+  title: {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      notEmpty: { msg: 'Please provide a department name' },
+      notEmpty: { msg: 'Please provide a project title' },
     },
   },
   description: {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  status: {
+    type: DataTypes.ENUM('pending', 'active', 'completed'),
+    defaultValue: 'pending',
+  },
 }, {
   indexes: [
     {
-      unique: true,
-      fields: ['organisationId', 'name'],
+      fields: ['ownerId', 'id'],
     },
   ],
 });
 
-module.exports = Department;
+module.exports = Project;

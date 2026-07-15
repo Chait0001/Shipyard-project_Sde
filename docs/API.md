@@ -1,3 +1,4 @@
+
 # Shipyard API Reference
 
 This document outlines the API endpoints, request payloads, response structures, and error states for the **Shipyard** backend service.
