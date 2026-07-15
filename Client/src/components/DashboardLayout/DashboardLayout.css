@@ -1,0 +1,124 @@
+/* ============================================================
+   DashboardLayout — App Shell and grid wrapper
+   ============================================================ */
+
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  background-color: var(--color-background);
+}
+
+/* ---- Sidebar wrapper for mobile drawer control ---- */
+.dashboard-layout__sidebar-wrapper {
+  display: flex;
+  flex-shrink: 0;
+}
+
+/* ---- Main content area ---- */
+.dashboard-layout__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background-color: var(--color-background);
+}
+
+.dashboard-layout__content {
+  flex: 1;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--space-8);
+}
+
+/* ---- Mobile Top Header (Hidden on Desktop) ---- */
+.dashboard-layout__mobile-header {
+  display: none;
+  height: var(--navbar-height);
+  width: 100%;
+  background-color: var(--color-background-subtle);
+  border-bottom: 1px solid var(--color-border);
+  align-items: center;
+  padding: 0 var(--space-4);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 90;
+}
+
+.dashboard-layout__mobile-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  color: var(--color-foreground-secondary);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-background);
+  margin-right: var(--space-3);
+}
+
+.dashboard-layout__mobile-title {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-foreground);
+  letter-spacing: -0.025em;
+}
+
+/* ---- Mobile Responsive Layout (Breakpoint md: 768px) ---- */
+@media (max-width: 768px) {
+  .dashboard-layout {
+    flex-direction: column;
+    padding-top: var(--navbar-height);
+  }
+
+  .dashboard-layout__mobile-header {
+    display: flex;
+  }
+
+  /* Sidebar wrapper becomes fixed overlay drawer */
+  .dashboard-layout__sidebar-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 200;
+    pointer-events: none;
+  }
+
+  .dashboard-layout__sidebar-wrapper .sidebar {
+    transform: translateX(-100%);
+    transition: transform var(--transition-base);
+    box-shadow: var(--shadow-lg);
+    background-color: var(--color-background);
+  }
+
+  .dashboard-layout__sidebar-wrapper--mobile-open {
+    pointer-events: auto;
+  }
+
+  .dashboard-layout__sidebar-wrapper--mobile-open .sidebar {
+    transform: translateX(0);
+  }
+
+  /* Backdrop filter when mobile menu is open */
+  .dashboard-layout__backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+    z-index: -1;
+  }
+
+  /* Content area adjustment */
+  .dashboard-layout__content {
+    padding: var(--space-4);
+  }
+}
