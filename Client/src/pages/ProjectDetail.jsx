@@ -91,7 +91,7 @@ const ProjectDetail = () => {
                   {project.status}
                 </span>
                 <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                  ID: <code>{project._id}</code>
+                  ID: <code>{project.id}</code>
                 </span>
               </div>
             </div>
@@ -145,7 +145,7 @@ const ProjectDetail = () => {
             boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.8)'
           }}>
             <div>[system] Initializing pipeline listener...</div>
-            <div>[system] Fetching metadata for node ID: {project._id}</div>
+            <div>[system] Fetching metadata for node ID: {project.id}</div>
             <div>[system] Status check: current state is "{project.status}"</div>
             {project.status === 'pending' && (
               <>
@@ -165,7 +165,7 @@ const ProjectDetail = () => {
               <>
                 <div>[build] Container validation: success.</div>
                 <div>[deploy] Routing network traffic to blue/green pods...</div>
-                <div style={{ color: 'var(--status-completed)', fontWeight: 600 }}>[success] Application live at: https://shipyard.internal/{project._id}</div>
+                <div style={{ color: 'var(--status-completed)', fontWeight: 600 }}>[success] Application live at: https://shipyard.internal/{project.id}</div>
               </>
             )}
           </div>
