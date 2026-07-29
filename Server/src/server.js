@@ -14,6 +14,9 @@ const Organisation = require('./models/Organisation');
 const Department = require('./models/Department');
 const Team = require('./models/Team');
 const Project = require('./models/Project');
+const GithubAccount = require('./models/GithubAccount');
+const GithubRepository = require('./models/GithubRepository');
+const PullRequest = require('./models/PullRequest');
 
 // Define Relationships/Associations
 // User <-> Organisation (Owner)
@@ -44,6 +47,26 @@ Team.belongsToMany(User, { through: 'UserTeams', foreignKey: 'teamId', otherKey:
 Project.belongsTo(User, { as: 'owner', foreignKey: 'ownerId' });
 User.hasMany(Project, { foreignKey: 'ownerId' });
 
+// Project <-> User (Creator)
+Project.belongsTo(User, { as: 'creator', foreignKey: 'createdById' });
+User.hasMany(Project, { foreignKey: 'createdById', as: 'createdProjects' });
+
+// User <-> GitHub account
+GithubAccount.belongsTo(User, { foreignKey: 'userId', onDelete: 'CASCADE' });
+User.hasOne(GithubAccount, { foreignKey: 'userId', as: 'githubAccount', onDelete: 'CASCADE' });
+
+// Project <-> GitHub repositories
+GithubRepository.belongsTo(Project, { foreignKey: 'projectId', onDelete: 'CASCADE' });
+Project.hasMany(GithubRepository, { foreignKey: 'projectId', as: 'githubRepositories', onDelete: 'CASCADE' });
+GithubRepository.belongsTo(GithubAccount, { foreignKey: 'githubAccountId', onDelete: 'SET NULL' });
+GithubAccount.hasMany(GithubRepository, { foreignKey: 'githubAccountId', as: 'repositories' });
+
+// Pull requests synced from GitHub
+PullRequest.belongsTo(Project, { foreignKey: 'projectId', onDelete: 'CASCADE' });
+Project.hasMany(PullRequest, { foreignKey: 'projectId', as: 'pullRequests', onDelete: 'CASCADE' });
+PullRequest.belongsTo(GithubRepository, { foreignKey: 'githubRepositoryId', onDelete: 'CASCADE' });
+GithubRepository.hasMany(PullRequest, { foreignKey: 'githubRepositoryId', as: 'pullRequests', onDelete: 'CASCADE' });
+
 const app = express();
 
 // Middlewares
@@ -73,7 +96,7 @@ const startServer = async () => {
   await connectDB.sequelize.sync();
   console.log('Database synced successfully');
 
-  const PORT = process.env.PORT || 5000;
+  const PORT = process.env.PORT || 5050;
   app.listen(PORT, () => {
     console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
   });

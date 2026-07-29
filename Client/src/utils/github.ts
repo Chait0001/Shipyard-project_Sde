@@ -12,10 +12,10 @@ const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID ?? ''
 
 /**
  * The OAuth scopes requested from GitHub.
- * `read:user` and `user:email` are sufficient for authentication
- * and fetching the user's primary email address.
+ * Shipyard needs repository access so it can verify a connected user
+ * can read private repos and sync pull requests.
  */
-const GITHUB_SCOPES = 'read:user user:email'
+const GITHUB_SCOPES = 'repo read:user user:email'
 
 /**
  * Build the full GitHub OAuth authorisation URL and redirect the
@@ -23,7 +23,7 @@ const GITHUB_SCOPES = 'read:user user:email'
  * `sessionStorage` so the callback page can validate it and prevent
  * CSRF attacks.
  */
-export function redirectToGitHub(): void {
+export function redirectToGitHub(returnTo = '/dashboard'): void {
   if (!GITHUB_CLIENT_ID) {
     console.error(
       '[GitHub OAuth] VITE_GITHUB_CLIENT_ID is not set. ' +
@@ -35,6 +35,7 @@ export function redirectToGitHub(): void {
   // Generate a random state token for CSRF protection
   const state = crypto.randomUUID()
   sessionStorage.setItem('github_oauth_state', state)
+  sessionStorage.setItem('github_oauth_return_to', returnTo)
 
   const params = new URLSearchParams({
     client_id: GITHUB_CLIENT_ID,

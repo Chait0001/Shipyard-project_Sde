@@ -9,7 +9,7 @@ export function OAuthCallbackPage() {
   const [searchParams] = useSearchParams()
   const [status, setStatus] = useState<CallbackStatus>('processing')
   const [errorMessage, setErrorMessage] = useState('')
-  const { loginWithGitHub } = useAuth()
+  const { connectGitHub } = useAuth()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -46,12 +46,16 @@ export function OAuthCallbackPage() {
       sessionStorage.removeItem('github_oauth_state')
 
       try {
-        await loginWithGitHub(code)
-        navigate('/dashboard', { replace: true })
+        await connectGitHub(code)
+        const returnTo = sessionStorage.getItem('github_oauth_return_to') || '/dashboard/projects'
+        sessionStorage.removeItem('github_oauth_return_to')
+        navigate(returnTo, { replace: true })
       } catch (err) {
-        const axiosError = err as { response?: { data?: { message?: string } } }
+        const axiosError = err as { response?: { data?: { error?: string; message?: string } } }
         const message =
-          axiosError.response?.data?.message || 'GitHub authentication failed. Please try again.'
+          axiosError.response?.data?.error ||
+          axiosError.response?.data?.message ||
+          'GitHub connection failed. Please try again.'
         setErrorMessage(message)
         setStatus('error')
       }
@@ -81,10 +85,10 @@ export function OAuthCallbackPage() {
               <line x1="9" y1="9" x2="15" y2="15" />
             </svg>
           </div>
-          <h1 className="oauth-callback-title">Authentication failed</h1>
+          <h1 className="oauth-callback-title">GitHub connection failed</h1>
           <p className="oauth-callback-message">{errorMessage}</p>
           <a href="/login" className="oauth-callback-link">
-            Back to login
+            Back to Shipyard
           </a>
         </div>
       </div>
@@ -96,8 +100,8 @@ export function OAuthCallbackPage() {
     <div className="oauth-callback-page">
       <div className="oauth-callback-card">
         <div className="oauth-callback-spinner" aria-hidden="true" />
-        <h1 className="oauth-callback-title">Authenticating with GitHub…</h1>
-        <p className="oauth-callback-message">Please wait while we verify your identity.</p>
+        <h1 className="oauth-callback-title">Connecting GitHub...</h1>
+        <p className="oauth-callback-message">Please wait while we store your repository access.</p>
       </div>
     </div>
   )
