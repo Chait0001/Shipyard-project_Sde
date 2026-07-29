@@ -63,9 +63,11 @@ export function LoginPage() {
       await login(email, password)
       navigate(from, { replace: true })
     } catch (error) {
-      const axiosError = error as { response?: { data?: { message?: string } } }
+      const axiosError = error as { response?: { data?: { error?: string; message?: string } } }
       const message =
-        axiosError.response?.data?.message || 'Invalid email or password. Please try again.'
+        axiosError.response?.data?.error ||
+        axiosError.response?.data?.message ||
+        'Invalid email or password. Please try again.'
       setErrors({ general: message })
     } finally {
       setIsLoading(false)
@@ -73,7 +75,7 @@ export function LoginPage() {
   }
 
   function handleGitHubLogin() {
-    redirectToGitHub()
+    redirectToGitHub(from)
   }
 
   return (

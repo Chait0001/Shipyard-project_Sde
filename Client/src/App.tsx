@@ -8,6 +8,8 @@ import { OAuthCallbackPage } from '@/pages/OAuthCallbackPage'
 import { TeamsPage } from '@/pages/TeamsPage'
 import { TeamDetailPage } from '@/pages/TeamDetailPage'
 import { TeamSettingsPage } from '@/pages/TeamSettingsPage'
+import { ProjectsPage } from '@/pages/ProjectsPage'
+import { ProjectDetailPage } from '@/pages/ProjectsPage/ProjectDetailPage'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { DashboardLayout } from '@/components/DashboardLayout'
 import './index.css'
@@ -54,13 +56,9 @@ function App() {
                   />
                   <Route
                     path="/dashboard/projects"
-                    element={
-                      <PlaceholderPage
-                        title="Projects"
-                        description="Project tracking, Kanban board, and issue backlogs."
-                      />
-                    }
+                    element={<ProjectsPage />}
                   />
+                  <Route path="/dashboard/projects/:projectId" element={<ProjectDetailPage />} />
                   <Route path="/dashboard/teams" element={<TeamsPage />} />
                   <Route path="/dashboard/teams/:teamId" element={<TeamDetailPage />} />
                   <Route path="/dashboard/teams/:teamId/settings" element={<TeamSettingsPage />} />

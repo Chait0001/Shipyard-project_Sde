@@ -73,9 +73,11 @@ export function SignupPage() {
       await signup(name, email, password)
       navigate('/dashboard')
     } catch (error) {
-      const axiosError = error as { response?: { data?: { message?: string } } }
+      const axiosError = error as { response?: { data?: { error?: string; message?: string } } }
       const message =
-        axiosError.response?.data?.message || 'An account with this email may already exist.'
+        axiosError.response?.data?.error ||
+        axiosError.response?.data?.message ||
+        'An account with this email may already exist.'
       setErrors({ general: message })
     } finally {
       setIsLoading(false)
@@ -83,7 +85,7 @@ export function SignupPage() {
   }
 
   function handleGitHubSignup() {
-    redirectToGitHub()
+    redirectToGitHub('/dashboard')
   }
 
   return (
