@@ -8,6 +8,7 @@ import { SignupPage } from '@/pages/SignupPage'
 import { OAuthCallbackPage } from '@/pages/OAuthCallbackPage'
 import { DashboardPage } from '@/pages/DashboardPage/DashboardPage'
 import { ReposPage } from '@/pages/ReposPage/ReposPage'
+import { ProjectsPage, ProjectDetailPage } from '@/pages/ProjectsPage'
 import { TeamsPage } from '@/pages/TeamsPage'
 import { TeamDetailPage } from '@/pages/TeamDetailPage'
 import { TeamSettingsPage } from '@/pages/TeamSettingsPage'
@@ -50,15 +51,8 @@ function MainRoutes() {
             <Route element={<ProtectedRoute />}>
               <Route element={<DashboardLayout />}>
                 <Route path="/dashboard" element={<DashboardPage />} />
-                <Route
-                  path="/dashboard/projects"
-                  element={
-                    <PlaceholderPage
-                      title="Projects"
-                      description="Project tracking, Kanban board, and issue backlogs."
-                    />
-                  }
-                />
+                <Route path="/dashboard/projects" element={<ProjectsPage />} />
+                <Route path="/dashboard/projects/:projectId" element={<ProjectDetailPage />} />
                 <Route path="/dashboard/teams" element={<TeamsPage />} />
                 <Route path="/dashboard/teams/:teamId" element={<TeamDetailPage />} />
                 <Route path="/dashboard/teams/:teamId/settings" element={<TeamSettingsPage />} />

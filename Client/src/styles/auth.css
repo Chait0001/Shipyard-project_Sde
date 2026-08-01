@@ -1,29 +1,66 @@
 /* ============================================================
-   Auth — Shared styles for Login & Signup pages
+   Auth — Shared styles for the Login page (GitHub-only sign-in)
    ============================================================ */
 
 .auth-page {
+  position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--space-4);
+  overflow: hidden;
   background-color: var(--color-background-subtle);
 }
 
+/* ---- Ambient backdrop glow ---- */
+.auth-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 900px;
+  height: 900px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    var(--color-accent-info) 0%,
+    transparent 60%
+  );
+  opacity: 0.08;
+  filter: blur(40px);
+  pointer-events: none;
+}
+
 .auth-card {
+  position: relative;
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   padding: var(--space-8);
   background-color: var(--color-background);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* ---- Brand mark ---- */
+.auth-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: var(--space-4);
+  color: var(--color-primary-foreground);
+  background-color: var(--color-primary);
+  border-radius: var(--radius-lg);
 }
 
 /* ---- Header ---- */
 .auth-header {
-  text-align: center;
   margin-bottom: var(--space-6);
 }
 
@@ -35,55 +72,10 @@
 }
 
 .auth-subtitle {
-  margin-top: var(--space-1);
+  margin-top: var(--space-2);
   font-size: var(--text-sm);
   color: var(--color-foreground-secondary);
-}
-
-/* ---- Error Banner ---- */
-.auth-error-banner {
-  padding: var(--space-3);
-  margin-bottom: var(--space-4);
-  font-size: var(--text-xs);
-  color: var(--color-accent-error);
-  background-color: rgba(239, 68, 68, 0.08);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  border-radius: var(--radius-md);
-}
-
-/* ---- Form ---- */
-.auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.auth-form .btn {
-  width: 100%;
-  margin-top: var(--space-1);
-}
-
-/* ---- Divider ---- */
-.auth-divider {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin: var(--space-5) 0;
-}
-
-.auth-divider::before,
-.auth-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background-color: var(--color-border);
-}
-
-.auth-divider span {
-  font-size: var(--text-xs);
-  color: var(--color-foreground-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  max-width: 320px;
 }
 
 /* ---- GitHub Button ---- */
@@ -91,23 +83,47 @@
   width: 100%;
 }
 
-/* ---- Footer ---- */
-.auth-footer {
+.auth-hint {
+  margin-top: var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--color-foreground-muted);
+}
+
+/* ---- Feature list ---- */
+.auth-features {
+  width: 100%;
   margin-top: var(--space-6);
-  text-align: center;
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.auth-features li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: left;
   font-size: var(--text-sm);
   color: var(--color-foreground-secondary);
 }
 
-.auth-link {
-  color: var(--color-foreground);
-  font-weight: 500;
-  text-decoration: underline;
-  text-underline-offset: 2px;
+.auth-features li svg {
+  flex-shrink: 0;
+  color: var(--color-accent-success);
 }
 
-.auth-link:hover {
-  color: var(--color-accent-info);
+/* ---- Error Banner (OAuth callback failures) ---- */
+.auth-error-banner {
+  width: 100%;
+  padding: var(--space-3);
+  margin-bottom: var(--space-4);
+  font-size: var(--text-xs);
+  color: var(--color-accent-error);
+  background-color: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--radius-md);
 }
 
 /* ---- Responsive ---- */

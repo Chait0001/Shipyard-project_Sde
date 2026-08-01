@@ -5,7 +5,8 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "dev": "nodemon src/server.js",
+    "test": "find src -name '*.test.js' | xargs node --test"
   },
   "dependencies": {
     "@clerk/express": "^2.1.49",
