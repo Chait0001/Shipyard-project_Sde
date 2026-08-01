@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { SignUp, useSignUp } from '@clerk/clerk-react'
 import { useAuth } from '@/context/AuthContext'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -23,6 +24,10 @@ interface SignupFormErrors {
   general?: string
 }
 
+const CLERK_PUBLISHABLE_KEY =
+  import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ||
+  import.meta.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+
 export function SignupPage() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -32,6 +37,25 @@ export function SignupPage() {
   const [isLoading, setIsLoading] = useState(false)
   const { signup } = useAuth()
   const navigate = useNavigate()
+
+  let signUpObj: ReturnType<typeof useSignUp>['signUp'] = undefined
+  let isSignUpLoaded = false
+  try {
+    const clerkSignUp = useSignUp()
+    signUpObj = clerkSignUp.signUp
+    isSignUpLoaded = clerkSignUp.isLoaded
+  } catch {
+    // Clerk hook fallback
+  }
+
+  // Render Clerk prebuilt SignUp interface when Clerk key is configured
+  if (CLERK_PUBLISHABLE_KEY) {
+    return (
+      <div className="auth-page" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <SignUp signInUrl="/login" forceRedirectUrl="/dashboard" />
+      </div>
+    )
+  }
 
   function validate(): boolean {
     const newErrors: SignupFormErrors = {}
@@ -73,16 +97,30 @@ export function SignupPage() {
       await signup(name, email, password)
       navigate('/dashboard')
     } catch (error) {
-      const axiosError = error as { response?: { data?: { message?: string } } }
+      const axiosError = error as { response?: { data?: { error?: string; message?: string } } }
       const message =
-        axiosError.response?.data?.message || 'An account with this email may already exist.'
+        axiosError.response?.data?.error ||
+        axiosError.response?.data?.message ||
+        'An account with this email may already exist.'
       setErrors({ general: message })
     } finally {
       setIsLoading(false)
     }
   }
 
-  function handleGitHubSignup() {
+  async function handleGitHubSignup() {
+    if (isSignUpLoaded && signUpObj) {
+      try {
+        await signUpObj.authenticateWithRedirect({
+          strategy: 'oauth_github',
+          redirectUrl: `${window.location.origin}/oauth/github/callback`,
+          redirectUrlComplete: `${window.location.origin}/dashboard`,
+        })
+        return
+      } catch (err) {
+        console.warn('Clerk GitHub OAuth signup fallback:', err)
+      }
+    }
     redirectToGitHub()
   }
 

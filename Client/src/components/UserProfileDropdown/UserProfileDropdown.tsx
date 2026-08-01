@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '@/context/AuthContext'
+import { UserButton, SignedIn } from '@clerk/clerk-react'
 import { LogOut, User, Settings } from 'lucide-react'
 import './UserProfileDropdown.css'
 
@@ -14,6 +15,10 @@ interface User {
 interface UserProfileDropdownProps {
   user?: User | null
 }
+
+const CLERK_PUBLISHABLE_KEY =
+  import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ||
+  import.meta.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 
 export function UserProfileDropdown({ user: propUser }: UserProfileDropdownProps) {
   const { user: contextUser, logout } = useAuth()
@@ -47,6 +52,24 @@ export function UserProfileDropdown({ user: propUser }: UserProfileDropdownProps
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [])
+
+  // If Clerk key is configured, display Clerk UserButton component
+  if (CLERK_PUBLISHABLE_KEY) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <SignedIn>
+          <UserButton
+            afterSignOutUrl="/login"
+            appearance={{
+              elements: {
+                avatarBox: { width: '32px', height: '32px' },
+              },
+            }}
+          />
+        </SignedIn>
+      </div>
+    )
+  }
 
   if (!user) return null
 

@@ -44,16 +44,27 @@ Team.belongsToMany(User, { through: 'UserTeams', foreignKey: 'teamId', otherKey:
 Project.belongsTo(User, { as: 'owner', foreignKey: 'ownerId' });
 User.hasMany(Project, { foreignKey: 'ownerId' });
 
+const { clerkMiddleware } = require('@clerk/express');
+
 const app = express();
 
 // Middlewares
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
+app.use(clerkMiddleware());
 
 // Routes
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/projects', require('./routes/projectRoutes'));
+const authRoutes = require('./routes/authRoutes');
+const projectRoutes = require('./routes/projectRoutes');
+const githubRoutes = require('./routes/githubRoutes');
+
+app.use('/api/auth', authRoutes);
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/projects', projectRoutes);
+app.use('/api/v1/projects', projectRoutes);
+app.use('/api/github', githubRoutes);
+app.use('/api/v1/github', githubRoutes);
 
 // Global Error Handler
 app.use((err, req, res, next) => {
@@ -70,7 +81,7 @@ const startServer = async () => {
   await connectDB();
   
   // Sync database models
-  await connectDB.sequelize.sync();
+  await connectDB.sequelize.sync({ alter: true });
   console.log('Database synced successfully');
 
   const PORT = process.env.PORT || 5000;

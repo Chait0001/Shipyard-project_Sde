@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { SignIn, useSignIn } from '@clerk/clerk-react'
 import { useAuth } from '@/context/AuthContext'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -21,6 +22,10 @@ interface LoginFormErrors {
   general?: string
 }
 
+const CLERK_PUBLISHABLE_KEY =
+  import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ||
+  import.meta.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+
 export function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -30,8 +35,27 @@ export function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
 
+  let signInObj: ReturnType<typeof useSignIn>['signIn'] = undefined
+  let isSignInLoaded = false
+  try {
+    const clerkSignIn = useSignIn()
+    signInObj = clerkSignIn.signIn
+    isSignInLoaded = clerkSignIn.isLoaded
+  } catch {
+    // Clerk hook optional fallback
+  }
+
   // Redirect back to the page the user originally requested (set by ProtectedRoute)
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/dashboard'
+
+  // Render Clerk prebuilt SignIn interface when Clerk key is configured
+  if (CLERK_PUBLISHABLE_KEY) {
+    return (
+      <div className="auth-page" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <SignIn signUpUrl="/signup" forceRedirectUrl="/dashboard" />
+      </div>
+    )
+  }
 
   function validate(): boolean {
     const newErrors: LoginFormErrors = {}
@@ -63,16 +87,30 @@ export function LoginPage() {
       await login(email, password)
       navigate(from, { replace: true })
     } catch (error) {
-      const axiosError = error as { response?: { data?: { message?: string } } }
+      const axiosError = error as { response?: { data?: { error?: string; message?: string } } }
       const message =
-        axiosError.response?.data?.message || 'Invalid email or password. Please try again.'
+        axiosError.response?.data?.error ||
+        axiosError.response?.data?.message ||
+        'Invalid email or password. Please try again.'
       setErrors({ general: message })
     } finally {
       setIsLoading(false)
     }
   }
 
-  function handleGitHubLogin() {
+  async function handleGitHubLogin() {
+    if (isSignInLoaded && signInObj) {
+      try {
+        await signInObj.authenticateWithRedirect({
+          strategy: 'oauth_github',
+          redirectUrl: `${window.location.origin}/oauth/github/callback`,
+          redirectUrlComplete: `${window.location.origin}/dashboard`,
+        })
+        return
+      } catch (err) {
+        console.warn('Clerk GitHub OAuth redirect fallback:', err)
+      }
+    }
     redirectToGitHub()
   }
 
