@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import './OAuthCallbackPage.css'
@@ -12,7 +12,14 @@ export function OAuthCallbackPage() {
   const { connectGitHub } = useAuth()
   const navigate = useNavigate()
 
+  // Guard against React 18 StrictMode double-invocation which would
+  // try to exchange the same one-time OAuth code twice.
+  const hasRun = useRef(false)
+
   useEffect(() => {
+    if (hasRun.current) return
+    hasRun.current = true
+
     async function handleCallback() {
       const code = searchParams.get('code')
       const state = searchParams.get('state')
