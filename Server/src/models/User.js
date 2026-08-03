@@ -26,13 +26,11 @@ const User = sequelize.define('User', {
   },
   password: {
     type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      len: {
-        args: [6, 100],
-        msg: 'Password must be at least 6 characters',
-      },
-    },
+    allowNull: true,
+  },
+  avatarUrl: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   role: {
     type: DataTypes.ENUM(
@@ -48,6 +46,10 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  organisationId: {
+    type: DataTypes.UUID,
+    allowNull: true,
+  },
 }, {
   hooks: {
     beforeCreate: async (user) => {
@@ -57,7 +59,7 @@ const User = sequelize.define('User', {
       }
     },
     beforeUpdate: async (user) => {
-      if (user.changed('password')) {
+      if (user.changed('password') && user.password) {
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(user.password, salt);
       }
@@ -67,6 +69,7 @@ const User = sequelize.define('User', {
 
 // Custom instance method
 User.prototype.matchPassword = async function (enteredPassword) {
+  if (!this.password) return false;
   return await bcrypt.compare(enteredPassword, this.password);
 };
 

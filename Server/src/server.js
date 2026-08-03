@@ -14,9 +14,6 @@ const Organisation = require('./models/Organisation');
 const Department = require('./models/Department');
 const Team = require('./models/Team');
 const Project = require('./models/Project');
-const GithubAccount = require('./models/GithubAccount');
-const GithubRepository = require('./models/GithubRepository');
-const PullRequest = require('./models/PullRequest');
 
 // Define Relationships/Associations
 // User <-> Organisation (Owner)
@@ -47,25 +44,7 @@ Team.belongsToMany(User, { through: 'UserTeams', foreignKey: 'teamId', otherKey:
 Project.belongsTo(User, { as: 'owner', foreignKey: 'ownerId' });
 User.hasMany(Project, { foreignKey: 'ownerId' });
 
-// Project <-> User (Creator)
-Project.belongsTo(User, { as: 'creator', foreignKey: 'createdById' });
-User.hasMany(Project, { foreignKey: 'createdById', as: 'createdProjects' });
-
-// User <-> GitHub account
-GithubAccount.belongsTo(User, { foreignKey: 'userId', onDelete: 'CASCADE' });
-User.hasOne(GithubAccount, { foreignKey: 'userId', as: 'githubAccount', onDelete: 'CASCADE' });
-
-// Project <-> GitHub repositories
-GithubRepository.belongsTo(Project, { foreignKey: 'projectId', onDelete: 'CASCADE' });
-Project.hasMany(GithubRepository, { foreignKey: 'projectId', as: 'githubRepositories', onDelete: 'CASCADE' });
-GithubRepository.belongsTo(GithubAccount, { foreignKey: 'githubAccountId', onDelete: 'SET NULL' });
-GithubAccount.hasMany(GithubRepository, { foreignKey: 'githubAccountId', as: 'repositories' });
-
-// Pull requests synced from GitHub
-PullRequest.belongsTo(Project, { foreignKey: 'projectId', onDelete: 'CASCADE' });
-Project.hasMany(PullRequest, { foreignKey: 'projectId', as: 'pullRequests', onDelete: 'CASCADE' });
-PullRequest.belongsTo(GithubRepository, { foreignKey: 'githubRepositoryId', onDelete: 'CASCADE' });
-GithubRepository.hasMany(PullRequest, { foreignKey: 'githubRepositoryId', as: 'pullRequests', onDelete: 'CASCADE' });
+const { clerkMiddleware } = require('@clerk/express');
 
 const app = express();
 
@@ -73,10 +52,19 @@ const app = express();
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
+app.use(clerkMiddleware());
 
 // Routes
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/projects', require('./routes/projectRoutes'));
+const authRoutes = require('./routes/authRoutes');
+const projectRoutes = require('./routes/projectRoutes');
+const githubRoutes = require('./routes/githubRoutes');
+
+app.use('/api/auth', authRoutes);
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/projects', projectRoutes);
+app.use('/api/v1/projects', projectRoutes);
+app.use('/api/github', githubRoutes);
+app.use('/api/v1/github', githubRoutes);
 
 // Global Error Handler
 app.use((err, req, res, next) => {
@@ -93,10 +81,10 @@ const startServer = async () => {
   await connectDB();
   
   // Sync database models
-  await connectDB.sequelize.sync();
+  await connectDB.sequelize.sync({ alter: true });
   console.log('Database synced successfully');
 
-  const PORT = process.env.PORT || 5050;
+  const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => {
     console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
   });

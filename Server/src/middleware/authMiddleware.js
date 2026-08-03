@@ -13,11 +13,19 @@ const protect = async (req, res, next) => {
       token = req.headers.authorization.split(' ')[1];
 
       // Verify token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const secret = process.env.JWT_SECRET || 'shipyard_jwt_secret_key_2026';
+      const decoded = jwt.verify(token, secret);
 
-      // Get user from the token, exclude password
-      req.user = await User.findByPk(decoded.id, { attributes: { exclude: ['password'] } });
-      
+      // Get user from the token using id or email, excluding password
+      if (decoded.id) {
+        req.user = await User.findByPk(decoded.id, { attributes: { exclude: ['password'] } });
+      } else if (decoded.email) {
+        req.user = await User.findOne({
+          where: { email: decoded.email },
+          attributes: { exclude: ['password'] },
+        });
+      }
+
       if (!req.user) {
         return res.status(401).json({
           success: false,
@@ -27,7 +35,7 @@ const protect = async (req, res, next) => {
 
       next();
     } catch (error) {
-      console.error(error);
+      console.error('Auth middleware error:', error.message);
       return res.status(401).json({
         success: false,
         error: 'Not authorized, token validation failed',
@@ -43,21 +51,4 @@ const protect = async (req, res, next) => {
   }
 };
 
-const optionalProtect = async (req, res, next) => {
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
-  ) {
-    try {
-      const token = req.headers.authorization.split(' ')[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = await User.findByPk(decoded.id, { attributes: { exclude: ['password'] } });
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  next();
-};
-
-module.exports = { protect, optionalProtect };
+module.exports = { protect };
