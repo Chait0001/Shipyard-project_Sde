@@ -7,6 +7,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const connectDB = require('./config/db');
+const { startAutoSyncWorker } = require('./services/autoSyncWorker');
 
 // Load Centralized Models and Associations
 const { sequelize } = require('./models');
@@ -25,6 +26,7 @@ app.use(clerkMiddleware());
 const authRoutes = require('./routes/authRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const githubRoutes = require('./routes/githubRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/v1/auth', authRoutes);
@@ -32,6 +34,7 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/v1/projects', projectRoutes);
 app.use('/api/github', githubRoutes);
 app.use('/api/v1/github', githubRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Global Error Handler
 app.use((err, req, res, next) => {
@@ -50,6 +53,7 @@ const startServer = async () => {
   const PORT = process.env.PORT || 5001;
   app.listen(PORT, () => {
     console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+    startAutoSyncWorker();
   });
 
   // Sync database models asynchronously
@@ -61,3 +65,4 @@ const startServer = async () => {
 startServer().catch(err => {
   console.error('Failed to start server:', err);
 });
+

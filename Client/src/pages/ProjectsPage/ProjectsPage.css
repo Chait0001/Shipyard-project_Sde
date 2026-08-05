@@ -44,10 +44,18 @@
 
 .projects-page__sync-panel,
 .projects-page__list,
-.project-detail__prs {
+.project-detail__prs,
+.project-detail__issues {
   background: var(--color-background);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
+}
+
+.project-detail__header-status {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
 }
 
 .projects-page__sync-header,
@@ -75,8 +83,7 @@
 }
 
 .projects-page__github-state,
-.projects-page__repo-chip,
-.projects-page__status-pill {
+.projects-page__repo-chip {
   align-items: center;
   border-radius: var(--radius-full);
   display: inline-flex;
@@ -190,28 +197,17 @@
   font-weight: 500;
 }
 
-.projects-page__status-pill {
-  align-self: flex-start;
-  background: #f3f4f6;
-  color: #374151;
-  text-transform: capitalize;
+.projects-page__card-footer {
+  align-items: center;
+  display: flex;
+  gap: var(--space-2);
+  justify-content: space-between;
+  margin-top: auto;
 }
 
-.projects-page__status-pill--syncing,
-.projects-page__status-pill--pending {
-  background: #eef2ff;
-  color: #4338ca;
-}
-
-.projects-page__status-pill--complete,
-.projects-page__status-pill--partial {
-  background: #ecfdf5;
-  color: #047857;
-}
-
-.projects-page__status-pill--failed {
-  background: #fef2f2;
-  color: #b91c1c;
+.projects-page__last-synced {
+  color: var(--color-foreground-muted);
+  font-size: var(--text-xs);
 }
 
 .projects-page__empty,
@@ -276,6 +272,62 @@
   line-height: 18px;
 }
 
+.project-detail__issue-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.project-detail__issue-row {
+  align-items: center;
+  border-bottom: 1px dashed var(--color-border);
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  padding: var(--space-3) var(--space-4);
+}
+
+.project-detail__issue-row:last-child {
+  border-bottom: 0;
+}
+
+.project-detail__issue-row h3 {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: 20px;
+  margin: 0;
+}
+
+.project-detail__issue-row p {
+  align-items: center;
+  color: var(--color-foreground-secondary);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: var(--text-xs);
+  gap: var(--space-2);
+  line-height: 18px;
+}
+
+.project-detail__label-chips {
+  display: inline-flex;
+  gap: var(--space-1);
+}
+
+.project-detail__label-chip {
+  background: var(--color-background-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-foreground-secondary);
+  font-size: 10px;
+  line-height: 16px;
+  padding: 1px var(--space-2);
+}
+
+.project-detail__issue-badges {
+  align-items: center;
+  display: flex;
+  gap: var(--space-2);
+}
+
 @keyframes projects-spin {
   to {
     transform: rotate(360deg);
@@ -306,7 +358,8 @@
     grid-template-columns: auto minmax(0, 1fr);
   }
 
-  .project-detail__pr-row .projects-page__status-pill {
+  .project-detail__pr-row .badge,
+  .project-detail__issue-row .badge {
     grid-column: 2;
   }
 }

@@ -1,3 +1,16 @@
+const CLOSING_KEYWORD_PATTERN = /\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\b\s*:?\s*#(\d+)/gi;
+
+const parseClosingIssueNumbers = (body) => {
+  if (!body) return [];
+
+  const numbers = new Set();
+  for (const match of body.matchAll(CLOSING_KEYWORD_PATTERN)) {
+    numbers.add(Number(match[1]));
+  }
+
+  return [...numbers];
+};
+
 const toPullRequestPayload = (pullRequest, projectId, githubRepositoryId) => ({
   projectId,
   githubRepositoryId,
@@ -9,6 +22,7 @@ const toPullRequestPayload = (pullRequest, projectId, githubRepositoryId) => ({
   githubUrl: pullRequest.html_url,
   githubCreatedAt: pullRequest.created_at,
   githubUpdatedAt: pullRequest.updated_at,
+  linkedIssueNumbers: parseClosingIssueNumbers(pullRequest.body),
   lastSyncedAt: new Date(),
 });
 
@@ -27,4 +41,5 @@ const syncPullRequestsToStore = async ({ pullRequests, projectId, githubReposito
 module.exports = {
   syncPullRequestsToStore,
   toPullRequestPayload,
+  parseClosingIssueNumbers,
 };

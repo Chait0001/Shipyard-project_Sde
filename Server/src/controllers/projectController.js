@@ -1,4 +1,9 @@
 const Project = require('../models/Project');
+const GithubRepository = require('../models/GithubRepository');
+const PullRequest = require('../models/PullRequest');
+const Issue = require('../models/Issue');
+const { GithubApiError } = require('../services/githubService');
+const { createProjectFromGithubRepo } = require('../services/projectSyncService');
 
 // @desc    Create a new project
 // @route   POST /api/projects
@@ -63,7 +68,25 @@ const getProjects = async (req, res) => {
 // @access  Private
 const getProjectById = async (req, res) => {
   try {
-    const project = await Project.findByPk(req.params.id);
+    const project = await Project.findByPk(req.params.id, {
+      include: [
+        {
+          model: GithubRepository,
+          as: 'githubRepositories',
+          attributes: ['id', 'owner', 'name', 'fullName', 'githubUrl', 'visibility', 'defaultBranch', 'lastSyncedAt'],
+        },
+        {
+          model: PullRequest,
+          as: 'pullRequests',
+          order: [['githubUpdatedAt', 'DESC']],
+        },
+        {
+          model: Issue,
+          as: 'issues',
+          order: [['githubUpdatedAt', 'DESC']],
+        },
+      ],
+    });
 
     if (!project) {
       return res.status(404).json({
@@ -100,8 +123,64 @@ const getProjectById = async (req, res) => {
   }
 };
 
+// @desc    Create or resync a project from a GitHub repository URL
+// @route   POST /api/projects/sync
+// @access  Private
+const syncProjectFromGithub = async (req, res) => {
+  try {
+    const { repoUrl } = req.body;
+    const result = await createProjectFromGithubRepo({
+      userId: req.user.id,
+      repoUrl,
+    });
+
+    const project = await Project.findByPk(result.project.id, {
+      include: [
+        {
+          model: GithubRepository,
+          as: 'githubRepositories',
+          attributes: ['id', 'owner', 'name', 'fullName', 'githubUrl', 'visibility', 'defaultBranch', 'lastSyncedAt'],
+        },
+        {
+          model: PullRequest,
+          as: 'pullRequests',
+        },
+        {
+          model: Issue,
+          as: 'issues',
+        },
+      ],
+    });
+
+    res.status(201).json({
+      success: true,
+      data: {
+        project,
+        sync: result.sync,
+      },
+    });
+  } catch (error) {
+    console.error(`Project Sync Error: ${error.message}`);
+
+    if (error instanceof GithubApiError) {
+      return res.status(error.status).json({
+        success: false,
+        code: error.code,
+        error: error.message,
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      code: 'PROJECT_SYNC_FAILED',
+      error: 'Server error during GitHub project sync',
+    });
+  }
+};
+
 module.exports = {
   createProject,
   getProjects,
   getProjectById,
+  syncProjectFromGithub,
 };

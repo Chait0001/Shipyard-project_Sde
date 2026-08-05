@@ -1,19 +1,15 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import {
-  AlertCircle,
-  CheckCircle2,
-  GitBranch,
-  Loader2,
-  Plus,
-  ShieldCheck,
-} from 'lucide-react'
+import { AlertCircle, CheckCircle2, GitBranch, Loader2, Plus, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { Badge } from '@/components/ui/Badge'
+import type { BadgeTone } from '@/components/ui/Badge'
 import { useAuth } from '@/context/AuthContext'
 import api from '@/utils/axios'
 import { redirectToGitHub } from '@/utils/github'
+import { formatRelativeTime } from '@/utils/formatRelativeTime'
 import './ProjectsPage.css'
 
 interface GithubRepository {
@@ -33,9 +29,14 @@ interface Project {
   syncStatus: 'pending' | 'syncing' | 'complete' | 'partial' | 'failed'
   githubRepositories?: GithubRepository[]
   createdAt: string
+  lastSyncedAt?: string
 }
 
 type SyncState = 'idle' | 'syncing' | 'complete' | 'failed'
+
+// 'partial' is visually treated as 'complete' — it still means usable, synced data.
+const syncStatusTone = (syncStatus: Project['syncStatus']): BadgeTone =>
+  syncStatus === 'partial' ? 'complete' : syncStatus
 
 const repoPattern =
   /^(https:\/\/github\.com\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+(?:\.git)?\/?|[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+)$/
@@ -77,7 +78,9 @@ export function ProjectsPage() {
   const githubConnected = Boolean(user?.github?.connected)
 
   const sortedProjects = useMemo(() => {
-    return [...projects].sort((a, b) => Number(new Date(b.createdAt)) - Number(new Date(a.createdAt)))
+    return [...projects].sort(
+      (a, b) => Number(new Date(b.createdAt)) - Number(new Date(a.createdAt)),
+    )
   }, [projects])
 
   useEffect(() => {
@@ -258,9 +261,12 @@ export function ProjectsPage() {
                       {repository.fullName}
                     </span>
                   )}
-                  <span className={`projects-page__status-pill projects-page__status-pill--${project.syncStatus}`}>
-                    {project.syncStatus}
-                  </span>
+                  <div className="projects-page__card-footer">
+                    <Badge tone={syncStatusTone(project.syncStatus)}>{project.syncStatus}</Badge>
+                    <span className="projects-page__last-synced">
+                      Last synced {formatRelativeTime(project.lastSyncedAt)}
+                    </span>
+                  </div>
                 </Link>
               )
             })}
