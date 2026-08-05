@@ -3,9 +3,14 @@ const jwt = require('jsonwebtoken');
 
 // Helper function to generate JWT containing user id and email
 const generateToken = (user) => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET must be set');
+  }
+
   return jwt.sign(
     { id: user.id, email: user.email },
-    process.env.JWT_SECRET || 'shipyard_jwt_secret_key_2026',
+    secret,
     { expiresIn: '30d' }
   );
 };
