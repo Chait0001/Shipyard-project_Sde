@@ -7,6 +7,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const connectDB = require('./config/db');
+const { startAutoSyncWorker } = require('./services/autoSyncWorker');
 
 // Load Models
 const User = require('./models/User');
@@ -17,6 +18,7 @@ const Project = require('./models/Project');
 const GithubAccount = require('./models/GithubAccount');
 const GithubRepository = require('./models/GithubRepository');
 const PullRequest = require('./models/PullRequest');
+const Issue = require('./models/Issue');
 
 // Define Relationships/Associations
 // User <-> Organisation (Owner)
@@ -62,10 +64,16 @@ GithubRepository.belongsTo(GithubAccount, { foreignKey: 'githubAccountId', onDel
 GithubAccount.hasMany(GithubRepository, { foreignKey: 'githubAccountId', as: 'repositories' });
 
 // Pull requests synced from GitHub
-PullRequest.belongsTo(Project, { foreignKey: 'projectId', onDelete: 'CASCADE' });
+PullRequest.belongsTo(Project, { foreignKey: 'projectId', as: 'project', onDelete: 'CASCADE' });
 Project.hasMany(PullRequest, { foreignKey: 'projectId', as: 'pullRequests', onDelete: 'CASCADE' });
-PullRequest.belongsTo(GithubRepository, { foreignKey: 'githubRepositoryId', onDelete: 'CASCADE' });
+PullRequest.belongsTo(GithubRepository, { foreignKey: 'githubRepositoryId', as: 'githubRepository', onDelete: 'CASCADE' });
 GithubRepository.hasMany(PullRequest, { foreignKey: 'githubRepositoryId', as: 'pullRequests', onDelete: 'CASCADE' });
+
+// Issues synced from GitHub
+Issue.belongsTo(Project, { foreignKey: 'projectId', as: 'project', onDelete: 'CASCADE' });
+Project.hasMany(Issue, { foreignKey: 'projectId', as: 'issues', onDelete: 'CASCADE' });
+Issue.belongsTo(GithubRepository, { foreignKey: 'githubRepositoryId', as: 'githubRepository', onDelete: 'CASCADE' });
+GithubRepository.hasMany(Issue, { foreignKey: 'githubRepositoryId', as: 'issues', onDelete: 'CASCADE' });
 
 const app = express();
 
@@ -77,6 +85,7 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/projects', require('./routes/projectRoutes'));
+app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 
 // Global Error Handler
 app.use((err, req, res, next) => {
@@ -99,6 +108,7 @@ const startServer = async () => {
   const PORT = process.env.PORT || 5050;
   app.listen(PORT, () => {
     console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+    startAutoSyncWorker();
   });
 };
 

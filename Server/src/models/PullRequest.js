@@ -45,6 +45,10 @@ const PullRequest = sequelize.define('PullRequest', {
     allowNull: false,
     defaultValue: DataTypes.NOW,
   },
+  linkedIssueNumbers: {
+    type: DataTypes.ARRAY(DataTypes.INTEGER),
+    allowNull: true,
+  },
 }, {
   indexes: [
     {

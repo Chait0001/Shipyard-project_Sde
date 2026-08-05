@@ -168,6 +168,25 @@ class GithubClient {
       truncated: Boolean(nextUrl),
     };
   }
+
+  async listIssues(owner, repo, maxPages = 10) {
+    const issues = [];
+    let nextUrl = `${GITHUB_API_BASE}/repos/${owner}/${repo}/issues?state=all&sort=updated&direction=desc&per_page=100`;
+    let pages = 0;
+
+    while (nextUrl && pages < maxPages) {
+      const { data, headers } = await this.request(nextUrl);
+      // GitHub's /issues endpoint also returns pull requests; exclude them.
+      issues.push(...data.filter((item) => !item.pull_request));
+      nextUrl = getNextLink(headers.get('link'));
+      pages += 1;
+    }
+
+    return {
+      issues,
+      truncated: Boolean(nextUrl),
+    };
+  }
 }
 
 const exchangeCodeForAccessToken = async (code) => {

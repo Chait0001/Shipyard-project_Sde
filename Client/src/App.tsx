@@ -10,6 +10,7 @@ import { TeamDetailPage } from '@/pages/TeamDetailPage'
 import { TeamSettingsPage } from '@/pages/TeamSettingsPage'
 import { ProjectsPage } from '@/pages/ProjectsPage'
 import { ProjectDetailPage } from '@/pages/ProjectsPage/ProjectDetailPage'
+import { DashboardPage } from '@/pages/DashboardPage'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { DashboardLayout } from '@/components/DashboardLayout'
 import './index.css'
@@ -45,15 +46,7 @@ function App() {
               {/* Protected routes — requires authentication */}
               <Route element={<ProtectedRoute />}>
                 <Route element={<DashboardLayout />}>
-                  <Route
-                    path="/dashboard"
-                    element={
-                      <PlaceholderPage
-                        title="Dashboard"
-                        description="Personal developer workspace, assigned issues, and active PRs."
-                      />
-                    }
-                  />
+                  <Route path="/dashboard" element={<DashboardPage />} />
                   <Route
                     path="/dashboard/projects"
                     element={<ProjectsPage />}

@@ -1,6 +1,7 @@
 const Project = require('../models/Project');
 const GithubRepository = require('../models/GithubRepository');
 const PullRequest = require('../models/PullRequest');
+const Issue = require('../models/Issue');
 const { GithubApiError } = require('../services/githubService');
 const { createProjectFromGithubRepo } = require('../services/projectSyncService');
 
@@ -88,6 +89,11 @@ const getProjectById = async (req, res) => {
           as: 'pullRequests',
           order: [['githubUpdatedAt', 'DESC']],
         },
+        {
+          model: Issue,
+          as: 'issues',
+          order: [['githubUpdatedAt', 'DESC']],
+        },
       ],
     });
 
@@ -147,6 +153,10 @@ const syncProjectFromGithub = async (req, res) => {
         {
           model: PullRequest,
           as: 'pullRequests',
+        },
+        {
+          model: Issue,
+          as: 'issues',
         },
       ],
     });
