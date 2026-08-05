@@ -1,14 +1,18 @@
+require('dotenv').config();
 const { Sequelize } = require('sequelize');
 
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
+const databaseUrl = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/shipyard';
+const isPostgres = databaseUrl.startsWith('postgres');
+
+const sequelize = new Sequelize(databaseUrl, {
   dialect: 'postgres',
   logging: false,
-  dialectOptions: {
+  dialectOptions: isPostgres ? {
     ssl: {
       require: true,
       rejectUnauthorized: false,
     },
-  },
+  } : {},
 });
 
 const connectDB = async () => {

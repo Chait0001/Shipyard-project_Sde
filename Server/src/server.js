@@ -8,41 +8,8 @@ dotenv.config();
 
 const connectDB = require('./config/db');
 
-// Load Models
-const User = require('./models/User');
-const Organisation = require('./models/Organisation');
-const Department = require('./models/Department');
-const Team = require('./models/Team');
-const Project = require('./models/Project');
-
-// Define Relationships/Associations
-// User <-> Organisation (Owner)
-Organisation.belongsTo(User, { as: 'owner', foreignKey: 'ownerId' });
-User.hasMany(Organisation, { foreignKey: 'ownerId' });
-
-// User <-> Organisation (Member)
-User.belongsTo(Organisation, { foreignKey: 'organisationId' });
-Organisation.hasMany(User, { foreignKey: 'organisationId' });
-
-// Department <-> Organisation
-Department.belongsTo(Organisation, { foreignKey: 'organisationId' });
-Organisation.hasMany(Department, { foreignKey: 'organisationId' });
-
-// Team <-> Organisation
-Team.belongsTo(Organisation, { foreignKey: 'organisationId' });
-Organisation.hasMany(Team, { foreignKey: 'organisationId' });
-
-// Team <-> Department
-Team.belongsTo(Department, { foreignKey: 'departmentId' });
-Department.hasMany(Team, { foreignKey: 'departmentId' });
-
-// User <-> Team (Many-to-Many)
-User.belongsToMany(Team, { through: 'UserTeams', foreignKey: 'userId', otherKey: 'teamId', as: 'memberTeams' });
-Team.belongsToMany(User, { through: 'UserTeams', foreignKey: 'teamId', otherKey: 'userId', as: 'members' });
-
-// Project <-> User (Owner)
-Project.belongsTo(User, { as: 'owner', foreignKey: 'ownerId' });
-User.hasMany(Project, { foreignKey: 'ownerId' });
+// Load Centralized Models and Associations
+const { sequelize } = require('./models');
 
 const { clerkMiddleware } = require('@clerk/express');
 
@@ -79,15 +46,16 @@ app.use((err, req, res, next) => {
 const startServer = async () => {
   // Connect to Database
   await connectDB();
-  
-  // Sync database models
-  await connectDB.sequelize.sync({ alter: true });
-  console.log('Database synced successfully');
 
-  const PORT = process.env.PORT || 5000;
+  const PORT = process.env.PORT || 5001;
   app.listen(PORT, () => {
     console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
   });
+
+  // Sync database models asynchronously
+  sequelize.sync()
+    .then(() => console.log('Database synced successfully'))
+    .catch((err) => console.warn('Database sync warning:', err.message));
 };
 
 startServer().catch(err => {

@@ -43,14 +43,7 @@ export function DashboardPage() {
             <CheckCircle2 className="auth-banner__icon" size={28} />
           </div>
           <div>
-            <div className="auth-banner__badge">
-              <span className="auth-banner__dot" />
-              AUTHENTICATED & CONNECTED
-            </div>
             <h1 className="auth-banner__title">Welcome back, {ghProfile?.name || user?.name || 'Developer'}!</h1>
-            <p className="auth-banner__subtitle">
-              All GitHub repositories, user statistics, and backend JWT user models are live and connected.
-            </p>
           </div>
         </div>
       </div>

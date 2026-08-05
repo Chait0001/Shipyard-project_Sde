@@ -1,4 +1,4 @@
-const User = require('../models/User');
+const { User, GithubAccount } = require('../models');
 const jwt = require('jsonwebtoken');
 
 // Helper function to generate JWT containing user id and email
@@ -252,6 +252,27 @@ const githubAuth = async (req, res) => {
       if (ghUser && !user.githubUsername) user.githubUsername = ghUser;
       if (avatar && !user.avatarUrl) user.avatarUrl = avatar;
       await user.save();
+    }
+
+    // Initialize/sync associated GithubAccount model if githubUsername is provided
+    if (ghUser) {
+      const existingAccount = await GithubAccount.findOne({ where: { userId: user.id } });
+      if (!existingAccount) {
+        await GithubAccount.create({
+          userId: user.id,
+          githubUserId: ghUser,
+          githubLogin: ghUser,
+          avatarUrl: avatar || user.avatarUrl,
+          accessToken: 'auth_provider_managed',
+          connectedAt: new Date(),
+        });
+      } else {
+        await existingAccount.update({
+          githubLogin: ghUser,
+          avatarUrl: avatar || user.avatarUrl,
+          lastVerifiedAt: new Date(),
+        });
+      }
     }
 
     const token = generateToken(user);

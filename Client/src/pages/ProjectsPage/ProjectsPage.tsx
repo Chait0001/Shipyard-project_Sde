@@ -65,7 +65,7 @@ const getSyncErrorMessage = (code?: string, status?: number) => {
 }
 
 export function ProjectsPage() {
-  const { user, refreshUser } = useAuth()
+  const { user } = useAuth()
   const navigate = useNavigate()
   const [repoUrl, setRepoUrl] = useState('')
   const [repoError, setRepoError] = useState('')
@@ -93,9 +93,8 @@ export function ProjectsPage() {
       }
     }
 
-    refreshUser()
     fetchProjects()
-  }, [refreshUser])
+  }, [])
 
   function validateRepoUrl() {
     const value = repoUrl.trim()
@@ -174,7 +173,7 @@ export function ProjectsPage() {
             }`}
           >
             {githubConnected ? <ShieldCheck size={16} /> : <GitBranch size={16} />}
-            {githubConnected ? `Connected as ${user?.github?.login}` : 'GitHub not connected'}
+            {githubConnected ? `Connected as ${user?.githubUsername || user?.name}` : 'GitHub not connected'}
           </span>
         </div>
 
@@ -187,7 +186,7 @@ export function ProjectsPage() {
               variant="primary"
               size="sm"
               iconLeft={<GitBranch size={16} />}
-              onClick={() => redirectToGitHub('/dashboard/projects')}
+              onClick={() => redirectToGitHub()}
             >
               Connect GitHub
             </Button>

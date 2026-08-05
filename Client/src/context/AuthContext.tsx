@@ -10,6 +10,11 @@ export interface User {
   email: string
   avatarUrl?: string
   globalRole?: string
+  githubUsername?: string
+  github?: {
+    connected: boolean
+    login?: string
+  }
 }
 
 interface AuthContextType {
