@@ -5,33 +5,9 @@ const dotenv = require('dotenv');
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const connectDB = require('./config/db');
-const User = require('./models/User');
-const Organisation = require('./models/Organisation');
-const Department = require('./models/Department');
-const Team = require('./models/Team');
-const Project = require('./models/Project');
 
-// Define Relationships/Associations (Must match server.js to create database columns)
-Organisation.belongsTo(User, { as: 'owner', foreignKey: 'ownerId' });
-User.hasMany(Organisation, { foreignKey: 'ownerId' });
-
-User.belongsTo(Organisation, { foreignKey: 'organisationId' });
-Organisation.hasMany(User, { foreignKey: 'organisationId' });
-
-Department.belongsTo(Organisation, { foreignKey: 'organisationId' });
-Organisation.hasMany(Department, { foreignKey: 'organisationId' });
-
-Team.belongsTo(Organisation, { foreignKey: 'organisationId' });
-Organisation.hasMany(Team, { foreignKey: 'organisationId' });
-
-Team.belongsTo(Department, { foreignKey: 'departmentId' });
-Department.hasMany(Team, { foreignKey: 'departmentId' });
-
-User.belongsToMany(Team, { through: 'UserTeams', foreignKey: 'userId', otherKey: 'teamId', as: 'memberTeams' });
-Team.belongsToMany(User, { through: 'UserTeams', foreignKey: 'teamId', otherKey: 'userId', as: 'members' });
-
-Project.belongsTo(User, { as: 'owner', foreignKey: 'ownerId' });
-User.hasMany(Project, { foreignKey: 'ownerId' });
+// Load Centralized Models and Associations
+const { User, Project } = require('./models');
 
 const runSeed = async () => {
   await connectDB();

@@ -7,16 +7,16 @@ const Project = sequelize.define('Project', {
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
   },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   title: {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
       notEmpty: { msg: 'Please provide a project title' },
     },
-  },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: true,
   },
   description: {
     type: DataTypes.STRING,
@@ -26,27 +26,26 @@ const Project = sequelize.define('Project', {
     type: DataTypes.ENUM('pending', 'active', 'completed'),
     defaultValue: 'pending',
   },
-  syncStatus: {
-    type: DataTypes.ENUM('pending', 'syncing', 'complete', 'partial', 'failed'),
-    defaultValue: 'pending',
-  },
   githubPrimaryRepoId: {
     type: DataTypes.STRING,
     allowNull: true,
-    unique: true,
+  },
+  syncStatus: {
+    type: DataTypes.ENUM('idle', 'syncing', 'complete', 'partial', 'failed'),
+    defaultValue: 'idle',
   },
   lastSyncedAt: {
     type: DataTypes.DATE,
+    allowNull: true,
+  },
+  createdById: {
+    type: DataTypes.UUID,
     allowNull: true,
   },
 }, {
   indexes: [
     {
       fields: ['ownerId', 'id'],
-    },
-    {
-      unique: true,
-      fields: ['githubPrimaryRepoId'],
     },
   ],
 });
