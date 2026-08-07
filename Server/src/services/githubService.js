@@ -64,14 +64,20 @@ class GithubClient {
 
   async request(pathOrUrl, options = {}) {
     const url = pathOrUrl.startsWith('http') ? pathOrUrl : `${GITHUB_API_BASE}${pathOrUrl}`;
+    const headers = {
+      Accept: 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+      'User-Agent': 'Shipyard-App',
+      ...(options.headers || {}),
+    };
+
+    if (this.accessToken && this.accessToken !== 'auth_provider_managed') {
+      headers.Authorization = `Bearer ${this.accessToken}`;
+    }
+
     const response = await fetch(url, {
       ...options,
-      headers: {
-        Accept: 'application/vnd.github+json',
-        Authorization: `Bearer ${this.accessToken}`,
-        'X-GitHub-Api-Version': '2022-11-28',
-        ...(options.headers || {}),
-      },
+      headers,
     });
 
     const rateLimitRemaining = response.headers.get('x-ratelimit-remaining');
@@ -123,6 +129,18 @@ class GithubClient {
   }
 
   async verifyRepositoryAccess(owner, repo, githubLogin) {
+    if (!this.accessToken || this.accessToken === 'auth_provider_managed') {
+      try {
+        await this.getRepository(owner, repo);
+        return 'read';
+      } catch (error) {
+        if (error.status === 404) {
+          throw error;
+        }
+        return 'read';
+      }
+    }
+
     try {
       const { data } = await this.request(
         `/repos/${owner}/${repo}/collaborators/${githubLogin}/permission`

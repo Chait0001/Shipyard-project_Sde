@@ -4,7 +4,6 @@ const {
   createProject,
   getProjects,
   getProjectById,
-  syncProjectFromGithub,
 } = require('../controllers/projectController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -14,8 +13,6 @@ router.use(protect);
 router.route('/')
   .post(createProject)
   .get(getProjects);
-
-router.post('/sync', syncProjectFromGithub);
 
 router.route('/:id')
   .get(getProjectById);

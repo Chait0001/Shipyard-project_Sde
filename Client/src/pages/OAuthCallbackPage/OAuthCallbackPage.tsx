@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import './OAuthCallbackPage.css'
@@ -9,23 +9,22 @@ export function OAuthCallbackPage() {
   const [searchParams] = useSearchParams()
   const [status, setStatus] = useState<CallbackStatus>('processing')
   const [errorMessage, setErrorMessage] = useState('')
-  const { connectGitHub } = useAuth()
+  const { user, isAuthenticated, loginWithGitHub } = useAuth()
   const navigate = useNavigate()
 
-  // Guard against React 18 StrictMode double-invocation which would
-  // try to exchange the same one-time OAuth code twice.
-  const hasRun = useRef(false)
-
   useEffect(() => {
-    if (hasRun.current) return
-    hasRun.current = true
+    // If user is already authenticated via Clerk or token, redirect to dashboard immediately
+    if (isAuthenticated || user) {
+      navigate('/dashboard', { replace: true })
+      return
+    }
 
     async function handleCallback() {
       const code = searchParams.get('code')
       const state = searchParams.get('state')
       const error = searchParams.get('error')
 
-      // GitHub returned an error (e.g. user denied access)
+      // GitHub returned an explicit error
       if (error) {
         const description =
           searchParams.get('error_description') || 'GitHub authorisation was denied.'
@@ -34,43 +33,49 @@ export function OAuthCallbackPage() {
         return
       }
 
-      // Missing authorisation code
-      if (!code) {
-        setErrorMessage('No authorisation code received from GitHub.')
-        setStatus('error')
+      // If authorization code is present, exchange with backend
+      if (code) {
+        // Validate CSRF state token if state was generated locally
+        const storedState = sessionStorage.getItem('github_oauth_state')
+        if (storedState && state && state !== storedState) {
+          setErrorMessage('Invalid state parameter. Please try again.')
+          setStatus('error')
+          return
+        }
+
+        sessionStorage.removeItem('github_oauth_state')
+
+        try {
+          await loginWithGitHub(code)
+          navigate('/dashboard', { replace: true })
+        } catch (err) {
+          const axiosError = err as { response?: { data?: { error?: string; message?: string } } }
+          const message =
+            axiosError.response?.data?.error ||
+            axiosError.response?.data?.message ||
+            'GitHub authentication failed. Please try again.'
+          setErrorMessage(message)
+          setStatus('error')
+        }
         return
       }
 
-      // Validate CSRF state token
-      const storedState = sessionStorage.getItem('github_oauth_state')
-      if (!state || state !== storedState) {
-        setErrorMessage('Invalid state parameter — possible CSRF attack. Please try again.')
-        setStatus('error')
-        return
-      }
+      // If no code in URL (e.g. returning from Clerk OAuth redirect), wait briefly for Clerk user sync
+      const timer = setTimeout(() => {
+        const token = localStorage.getItem('token')
+        if (token || isAuthenticated) {
+          navigate('/dashboard', { replace: true })
+        } else {
+          // If still no token after timeout, redirect to dashboard or login
+          navigate('/dashboard', { replace: true })
+        }
+      }, 1500)
 
-      // Clean up the stored state
-      sessionStorage.removeItem('github_oauth_state')
-
-      try {
-        await connectGitHub(code)
-        const returnTo = sessionStorage.getItem('github_oauth_return_to') || '/dashboard/projects'
-        sessionStorage.removeItem('github_oauth_return_to')
-        navigate(returnTo, { replace: true })
-      } catch (err) {
-        const axiosError = err as { response?: { data?: { error?: string; message?: string } } }
-        const message =
-          axiosError.response?.data?.error ||
-          axiosError.response?.data?.message ||
-          'GitHub connection failed. Please try again.'
-        setErrorMessage(message)
-        setStatus('error')
-      }
+      return () => clearTimeout(timer)
     }
 
     handleCallback()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [searchParams, isAuthenticated, user, loginWithGitHub, navigate])
 
   if (status === 'error') {
     return (
@@ -92,10 +97,10 @@ export function OAuthCallbackPage() {
               <line x1="9" y1="9" x2="15" y2="15" />
             </svg>
           </div>
-          <h1 className="oauth-callback-title">GitHub connection failed</h1>
+          <h1 className="oauth-callback-title">Authentication failed</h1>
           <p className="oauth-callback-message">{errorMessage}</p>
           <a href="/login" className="oauth-callback-link">
-            Back to Shipyard
+            Back to login
           </a>
         </div>
       </div>
@@ -107,8 +112,8 @@ export function OAuthCallbackPage() {
     <div className="oauth-callback-page">
       <div className="oauth-callback-card">
         <div className="oauth-callback-spinner" aria-hidden="true" />
-        <h1 className="oauth-callback-title">Connecting GitHub...</h1>
-        <p className="oauth-callback-message">Please wait while we store your repository access.</p>
+        <h1 className="oauth-callback-title">Authenticating with GitHub…</h1>
+        <p className="oauth-callback-message">Please wait while we verify your identity.</p>
       </div>
     </div>
   )

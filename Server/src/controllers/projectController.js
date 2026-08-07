@@ -21,11 +21,9 @@ const createProject = async (req, res) => {
 
     const project = await Project.create({
       title,
-      name: title,
       description,
       status: status || 'pending',
       ownerId: req.user.id,
-      createdById: req.user.id,
     });
 
     res.status(201).json({
@@ -48,13 +46,6 @@ const getProjects = async (req, res) => {
   try {
     const projects = await Project.findAll({
       where: { ownerId: req.user.id },
-      include: [
-        {
-          model: GithubRepository,
-          as: 'githubRepositories',
-          attributes: ['id', 'owner', 'name', 'fullName', 'githubUrl', 'visibility', 'lastSyncedAt'],
-        },
-      ],
       order: [['createdAt', 'DESC']],
     });
 
