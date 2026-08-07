@@ -33,6 +33,25 @@ const CLERK_PUBLISHABLE_KEY =
   import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ||
   import.meta.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 
+function formatUserData(userData: any): User {
+  const ghLogin =
+    userData.githubUsername ||
+    userData.github?.login ||
+    (userData.name ? userData.name.toLowerCase().replace(/\s+/g, '') : 'github_developer')
+  return {
+    id: userData.id || userData._id,
+    name: userData.name,
+    email: userData.email,
+    avatarUrl: userData.avatarUrl,
+    globalRole: userData.globalRole || userData.role || 'engineer',
+    githubUsername: ghLogin,
+    github: {
+      connected: Boolean(userData.github?.connected ?? true),
+      login: ghLogin,
+    },
+  }
+}
+
 function AuthProviderWithClerk({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -72,13 +91,7 @@ function AuthProviderWithClerk({ children }: { children: ReactNode }) {
 
             const { token, user: userData } = response.data
             localStorage.setItem('token', token)
-            setUser({
-              id: userData.id || userData._id,
-              name: userData.name,
-              email: userData.email,
-              avatarUrl: userData.avatarUrl,
-              globalRole: userData.globalRole || 'engineer',
-            })
+            setUser(formatUserData(userData))
           }
         } catch (err) {
           console.error('Failed to sync Clerk user with backend:', err)
@@ -91,7 +104,7 @@ function AuthProviderWithClerk({ children }: { children: ReactNode }) {
         if (token) {
           api
             .get('/auth/me')
-            .then((res) => setUser(res.data))
+            .then((res) => setUser(formatUserData(res.data)))
             .catch(() => logout())
             .finally(() => setIsLoading(false))
         } else {
@@ -109,13 +122,7 @@ function AuthProviderWithClerk({ children }: { children: ReactNode }) {
       const response = await api.post('/auth/login', { email, password })
       const { token, user: userData } = response.data
       localStorage.setItem('token', token)
-      setUser({
-        id: userData.id || userData._id,
-        name: userData.name,
-        email: userData.email,
-        avatarUrl: userData.avatarUrl,
-        globalRole: userData.globalRole || 'engineer',
-      })
+      setUser(formatUserData(userData))
     } catch (error) {
       logout()
       throw error
@@ -130,13 +137,7 @@ function AuthProviderWithClerk({ children }: { children: ReactNode }) {
       const response = await api.post('/auth/register', { name, email, password })
       const { token, user: userData } = response.data
       localStorage.setItem('token', token)
-      setUser({
-        id: userData.id || userData._id,
-        name: userData.name,
-        email: userData.email,
-        avatarUrl: userData.avatarUrl,
-        globalRole: userData.globalRole || 'engineer',
-      })
+      setUser(formatUserData(userData))
     } catch (error) {
       logout()
       throw error
@@ -151,13 +152,7 @@ function AuthProviderWithClerk({ children }: { children: ReactNode }) {
       const response = await api.post('/auth/github', { code })
       const { token, user: userData } = response.data
       localStorage.setItem('token', token)
-      setUser({
-        id: userData.id || userData._id,
-        name: userData.name,
-        email: userData.email,
-        avatarUrl: userData.avatarUrl,
-        globalRole: userData.globalRole || 'engineer',
-      })
+      setUser(formatUserData(userData))
     } catch (error) {
       logout()
       throw error
@@ -196,7 +191,7 @@ function AuthProviderStandard({ children }: { children: ReactNode }) {
 
       try {
         const response = await api.get('/auth/me')
-        setUser(response.data)
+        setUser(formatUserData(response.data))
       } catch (error) {
         console.error('Failed to authenticate token:', error)
         logout()
@@ -214,13 +209,7 @@ function AuthProviderStandard({ children }: { children: ReactNode }) {
       const response = await api.post('/auth/login', { email, password })
       const { token, user: userData } = response.data
       localStorage.setItem('token', token)
-      setUser({
-        id: userData.id || userData._id,
-        name: userData.name,
-        email: userData.email,
-        avatarUrl: userData.avatarUrl,
-        globalRole: userData.globalRole || 'engineer',
-      })
+      setUser(formatUserData(userData))
     } catch (error) {
       logout()
       throw error
@@ -235,13 +224,7 @@ function AuthProviderStandard({ children }: { children: ReactNode }) {
       const response = await api.post('/auth/register', { name, email, password })
       const { token, user: userData } = response.data
       localStorage.setItem('token', token)
-      setUser({
-        id: userData.id || userData._id,
-        name: userData.name,
-        email: userData.email,
-        avatarUrl: userData.avatarUrl,
-        globalRole: userData.globalRole || 'engineer',
-      })
+      setUser(formatUserData(userData))
     } catch (error) {
       logout()
       throw error
@@ -256,13 +239,7 @@ function AuthProviderStandard({ children }: { children: ReactNode }) {
       const response = await api.post('/auth/github', { code })
       const { token, user: userData } = response.data
       localStorage.setItem('token', token)
-      setUser({
-        id: userData.id || userData._id,
-        name: userData.name,
-        email: userData.email,
-        avatarUrl: userData.avatarUrl,
-        globalRole: userData.globalRole || 'engineer',
-      })
+      setUser(formatUserData(userData))
     } catch (error) {
       logout()
       throw error

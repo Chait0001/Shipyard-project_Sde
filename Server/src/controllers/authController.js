@@ -141,12 +141,18 @@ const getMe = async (req, res) => {
       });
     }
 
+    const ghUsername = req.user.githubUsername || req.user.name.toLowerCase().replace(/\s+/g, '');
+
     res.status(200).json({
       id: req.user.id,
       name: req.user.name,
       email: req.user.email,
       avatarUrl: req.user.avatarUrl,
-      githubUsername: req.user.githubUsername,
+      githubUsername: ghUsername,
+      github: {
+        connected: Boolean(ghUsername),
+        login: ghUsername,
+      },
       role: req.user.role,
       createdAt: req.user.createdAt,
     });
@@ -249,7 +255,7 @@ const githubAuth = async (req, res) => {
         avatarUrl: avatar || null,
       });
     } else {
-      if (ghUser && !user.githubUsername) user.githubUsername = ghUser;
+      if (ghUser) user.githubUsername = ghUser;
       if (avatar && !user.avatarUrl) user.avatarUrl = avatar;
       await user.save();
     }
@@ -286,6 +292,10 @@ const githubAuth = async (req, res) => {
         email: user.email,
         avatarUrl: user.avatarUrl,
         githubUsername: user.githubUsername,
+        github: {
+          connected: Boolean(user.githubUsername),
+          login: user.githubUsername,
+        },
         role: user.role,
       },
     });
